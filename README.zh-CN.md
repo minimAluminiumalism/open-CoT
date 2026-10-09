@@ -13,8 +13,6 @@
 
 ## 快速开始
 
-零依赖——仅需 Python 3.10+ 标准库。
-
 ```bash
 export OPENAI_API_KEY=sk-...                     # 必填
 export OPENAI_BASE_URL=https://...               # 可选，任何 OpenAI 兼容端点
@@ -49,16 +47,6 @@ python papers/arxiv-2609.26637/scripts/run_ladder.py
 （[pdf](docs/arxiv-2609.26637/report.zh-CN.pdf)）·
 [English](docs/arxiv-2609.26637/report.en.html)
 （[pdf](docs/arxiv-2609.26637/report.en.pdf)）
-
-## 目录结构
-
-```
-papers/arxiv-2609.26637/   每篇论文一个目录
-  forced_reasoning/        可复用协议库（client/prompts/protocol/problems）
-  scripts/                 replay_cot.py · run_batch.py · run_ladder.py
-  results/                 原始 JSON 记录（90 次运行）
-docs/arxiv-2609.26637/     详细报告（中 / 英）
-```
 
 ## 责任使用
 

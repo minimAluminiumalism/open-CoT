@@ -14,8 +14,6 @@ native reasoning is not exposed through the API.
 
 ## Quick start
 
-Zero dependencies — Python 3.10+ standard library only.
-
 ```bash
 export OPENAI_API_KEY=sk-...                     # required
 export OPENAI_BASE_URL=https://...               # optional, OpenAI-compatible endpoint
@@ -53,16 +51,6 @@ Full details: [docs/arxiv-2609.26637/report.en.html](docs/arxiv-2609.26637/repor
 ([pdf](docs/arxiv-2609.26637/report.en.pdf)) ·
 [中文](docs/arxiv-2609.26637/report.zh-CN.html)
 ([pdf](docs/arxiv-2609.26637/report.zh-CN.pdf))
-
-## Repository layout
-
-```
-papers/arxiv-2609.26637/   one directory per paper
-  forced_reasoning/        reusable protocol library (client/prompts/protocol/problems)
-  scripts/                 replay_cot.py · run_batch.py · run_ladder.py
-  results/                 raw JSON records (90 runs)
-docs/arxiv-2609.26637/     detailed reports (en / zh-CN)
-```
 
 ## Responsible use
 
