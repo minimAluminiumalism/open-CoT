@@ -1,0 +1,26 @@
+{
+ "model": "gpt-6-astra",
+ "effort": "low",
+ "mode": "control",
+ "traces": [],
+ "calls": [
+  {
+   "round": 0,
+   "status": "completed",
+   "output_types": [
+    "reasoning",
+    "message"
+   ],
+   "output_tokens": 444,
+   "reasoning_tokens": 182,
+   "sec": 20.5
+  }
+ ],
+ "answer": "Factor the equation:\n\n\\[\nx^2-y^2=(x-y)(x+y)=9000.\n\\]\n\nLet\n\n\\[\na=x-y,\\qquad b=x+y.\n\\]\n\nSince \\(x,y\\) are positive, \\(b>a>0\\), and \\(a,b\\) must have the same parity. Because \\(ab=9000\\) is even, both must be even. Write\n\n\\[\na=2m,\\qquad b=2n.\n\\]\n\nThen\n\n\\[\nmn=\\frac{9000}{4}=2250,\\qquad n>m.\n\\]\n\nNow factor:\n\n\\[\n2250=2\\cdot 3^2\\cdot 5^3,\n\\]\n\nso the number of positive divisors is\n\n\\[\n(1+1)(2+1)(3+1)=24.\n\\]\n\nSince \\(2250\\) is not a perfect square, its divisors form \\(24/2=12\\) pairs \\((m,n)\\) with \\(m<n\\). Each gives exactly one ordered pair\n\n\\[\nx=m+n,\\qquad y=n-m.\n\\]\n\nTherefore, the number of ordered pairs is\n\n\\[\n\\boxed{12}.\n\\]",
+ "error": null,
+ "problem": "factor-9000",
+ "correct": true,
+ "judge_note": "nums tail=[12]",
+ "trace_tail_ints": [],
+ "trace_matches_expected": null
+}

@@ -1,0 +1,26 @@
+{
+ "model": "gpt-6-astra",
+ "effort": "low",
+ "mode": "control",
+ "traces": [],
+ "calls": [
+  {
+   "round": 0,
+   "status": "completed",
+   "output_types": [
+    "reasoning",
+    "message"
+   ],
+   "output_tokens": 248,
+   "reasoning_tokens": 36,
+   "sec": 16.0
+  }
+ ],
+ "answer": "The value of \\(n^2+n+1\\) modulo \\(7\\) depends only on \\(n\\bmod 7\\). Checking the seven possible residues gives\n\n\\[\n\\begin{array}{c|rrrrrrr}\nn\\bmod 7&0&1&2&3&4&5&6\\\\ \\hline\n(n^2+n+1)\\bmod 7&1&3&0&6&0&3&1\n\\end{array}\n\\]\n\nThus, we need \\(n\\equiv2\\) or \\(4\\pmod7\\).\n\nSince \\(1000=7\\cdot142+6\\), the first \\(994\\) integers contain \\(142\\) complete blocks of seven, contributing \\(2\\cdot142=284\\) solutions. The remaining six integers have residues \\(1,2,3,4,5,6\\), contributing two more.\n\nTherefore, the answer is \\(\\boxed{286}\\).",
+ "error": null,
+ "problem": "mod7-poly",
+ "correct": true,
+ "judge_note": "nums tail=[286]",
+ "trace_tail_ints": [],
+ "trace_matches_expected": null
+}

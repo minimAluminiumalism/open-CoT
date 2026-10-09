@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Replication Report · Forced-Reasoning Protocol (arXiv:2609.26637)</title>
+<style>
+  :root{
+    --ink:#111; --soft:#444; --rule:#111; --light-rule:#bbb;
+    --accent:#111; --paper:#fff; --box:#f5f5f5; --code-bg:#f4f4f4;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:#ececec; color:var(--ink);
+    font-family:"STIX Two Text","Source Serif Pro","Libertinus Serif","Charter",Georgia,"Times New Roman",serif;
+    font-size:17px; line-height:1.72;
+  }
+  .sheet{
+    max-width:860px; margin:0 auto; background:var(--paper);
+    padding:72px 72px 96px; box-shadow:0 0 0 1px #d8d8d8, 0 12px 48px rgba(0,0,0,.10);
+  }
+  @media (max-width:760px){ .sheet{padding:40px 22px 64px} body{font-size:16px} }
+
+  .doc-head{border-bottom:2.5px solid var(--rule); padding-bottom:26px; margin-bottom:34px}
+  .kicker{font-variant:small-caps; letter-spacing:.14em; color:var(--accent);
+          font-size:13px; text-align:center; margin-bottom:18px}
+  h1.title{font-size:27px; line-height:1.35; text-align:center; font-weight:700; margin:0 0 8px}
+  .subtitle{text-align:center; color:var(--soft); font-size:16.5px; margin:0 0 20px}
+  .byline{text-align:center; font-size:14.5px; color:var(--soft)}
+  .byline .names{font-variant:small-caps; letter-spacing:.05em; color:var(--ink); font-size:15.5px}
+  .rule-stack{border-top:1px solid var(--rule); margin-top:26px; padding-top:3px;
+              border-bottom:2.5px solid var(--rule); height:4px}
+
+  .abstract{margin:30px 6%; font-size:15px; line-height:1.68; text-align:justify; hyphens:auto}
+  .abstract .ab-label{display:block; text-align:center; font-variant:small-caps;
+                      letter-spacing:.12em; font-weight:600; margin-bottom:8px}
+  .abstract p{margin:.5em 0}
+
+  nav.toc{border:1px solid var(--light-rule); background:#f8f8f8; padding:18px 26px; margin:30px 0 8px}
+  nav.toc .toc-title{font-variant:small-caps; letter-spacing:.12em; font-weight:600;
+                     text-align:center; margin-bottom:10px}
+  nav.toc ol{margin:0; padding-left:1.6em; columns:2; column-gap:3em; font-size:14.5px}
+  nav.toc li{margin:2px 0}
+  nav.toc a{color:var(--ink); text-decoration:none}
+  nav.toc a:hover{color:var(--accent)}
+  @media (max-width:760px){ nav.toc ol{columns:1} }
+
+  h2{font-size:21px; font-weight:700; margin:2.1em 0 .55em; padding-top:.55em;
+     border-top:1.5px solid var(--rule)}
+  h2 .sec-no{color:var(--accent); margin-right:.45em}
+  h3{font-size:17.5px; font-weight:700; margin:1.6em 0 .4em}
+  h3 .sec-no{color:var(--accent); margin-right:.4em; font-size:15px}
+
+  p{margin:.62em 0; text-align:justify; hyphens:auto}
+  sup.fn{font-size:.72em; color:var(--accent); font-weight:600}
+  a{color:var(--accent)}
+
+  .quote{margin:.9em 4%; padding:.7em 1.2em; border-left:2.5px solid var(--light-rule);
+         color:#2a2a2a; font-size:15.5px; font-style:italic; background:#f8f8f8}
+  .quote .who{display:block; font-style:normal; font-size:12.5px; font-variant:small-caps;
+              letter-spacing:.08em; color:var(--soft); margin-top:.5em}
+  .bbox{border:1px solid var(--rule); background:var(--box); margin:1.1em 0; font-size:14.5px}
+  .bbox .cap{background:#eee; border-bottom:1px solid var(--rule); padding:6px 14px;
+             font-variant:small-caps; letter-spacing:.08em; font-weight:600; font-size:13px}
+  .bbox .body{padding:12px 18px}
+  .bbox .body p{text-align:left; margin:.45em 0}
+
+  pre.code{font-family:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace; font-size:13px;
+           line-height:1.55; background:var(--code-bg); border:1px solid var(--light-rule);
+           padding:14px 18px; overflow-x:auto; margin:1em 0}
+  code{font-family:"SF Mono",Menlo,Consolas,monospace; font-size:.88em;
+       background:var(--code-bg); padding:.08em .3em; border-radius:2px;
+       overflow-wrap:anywhere}
+
+  .tbl{margin:1.2em 0; overflow-x:auto}
+  table{margin:0 auto; border-collapse:collapse; font-size:14.5px; min-width:60%}
+  .tbl-cap{font-size:13.5px; text-align:center; color:var(--soft); margin:0 0 6px; font-style:italic}
+  .tbl-cap b{font-style:normal; color:var(--ink)}
+  thead th{border-top:2.2px solid var(--rule); border-bottom:1.1px solid var(--rule);
+           padding:5px 12px; font-variant:small-caps; letter-spacing:.04em; text-align:center}
+  tbody td{padding:4.5px 12px; text-align:center; border-bottom:.5px solid #e2e2e2}
+  tbody tr:last-child td{border-bottom:2.2px solid var(--rule)}
+  td.l,th.l{text-align:left}
+  td.num{font-variant-numeric:tabular-nums}
+
+  figure{margin:1.4em 0; text-align:center}
+  figure svg{max-width:100%}
+  figcaption{font-size:13.5px; color:var(--soft); font-style:italic; margin-top:8px;
+             text-align:justify; max-width:88%; margin-left:auto; margin-right:auto}
+  figcaption b{font-style:normal; color:var(--ink)}
+
+  ul,ol{padding-left:1.7em}
+  li{margin:.3em 0; text-align:justify}
+  .divider{border:none; border-top:1px solid var(--light-rule); margin:2.2em auto; width:38%}
+  .endnotes{font-size:14px; color:var(--soft); border-top:1.5px solid var(--rule);
+            padding-top:.8em; margin-top:2.6em}
+  .endnotes ol{padding-left:1.5em}
+  footer{margin-top:3em; padding-top:1em; border-top:2.5px solid var(--rule);
+         font-size:12.5px; color:var(--soft); text-align:center; font-variant:small-caps;
+         letter-spacing:.08em}
+
+  @media print{
+    body{background:#fff; font-size:11.5pt; line-height:1.6}
+    .sheet{max-width:none; margin:0; padding:0; box-shadow:none}
+    h2{break-after:avoid}
+    h3{break-after:avoid}
+    table,.bbox,figure,pre.code{break-inside:avoid}
+    a{color:var(--ink); text-decoration:none}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header class="doc-head">
+  <div class="kicker">Replication Report</div>
+  <h1 class="title">Reproducing the Forced-Reasoning Protocol on an OpenAI-Compatible Endpoint:<br>GPT-5.6-Sol and GPT-6-Astra</h1>
+  <p class="subtitle">Independent replication and extended observations of arXiv:2609.26637v1</p>
+  <p class="byline">
+    <span class="names">Experimental Record · 2026-10-09</span><br>
+    Responses API · 90 controlled calls
+  </p>
+  <p class="byline" style="margin-top:10px"><a href="report.zh-CN.html">中文版本</a></p>
+  <div class="rule-stack"></div>
+</header>
+
+<div class="abstract">
+  <span class="ab-label">Abstract</span>
+  <p>This report documents a reproduction of the Forced-Reasoning protocol from arXiv:2609.26637 on an OpenAI-compatible endpoint using the Responses API. The protocol registers a custom tool <code>forced-reasoning</code> with a single free-text parameter, forces its invocation on the first call via named <code>tool_choice</code>, records the <code>reasoning</code> argument, returns a fixed acknowledgement, then resumes automatic tool selection until a final answer is produced. The evaluation set comprises ten competition-level problems, each paired with an independent programmatic verifier; correctness never relies on remembered answers or model self-evaluation. Ninety calls were executed across GPT-5.6-Sol and GPT-6-Astra, covering no-tool controls and multiple forced configurations. Findings: (i) both models were induced to write substantive reasoning into the tool argument, with GPT-5.6-Sol reporting zero reasoning tokens on all 20 forced runs; (ii) forced accuracy matched or exceeded the no-tool control on both models, with Astra scoring 50/50 across all forced runs; (iii) every forced interaction contained exactly one tool call — the protocol's multi-round loop was never exercised; (iv) three sessions produced final answers inconsistent with the trace's own conclusion, and one model repeatedly wrote plan-only stub text to satisfy the forced call before performing the actual reasoning in the native channel. These results are consistent with the paper's qualitative claims, and provide direct evidence for its stipulation that extracted traces are behavioral proxies rather than verbatim internal chain-of-thought.</p>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#s1">Objective and Scope</a></li>
+    <li><a href="#s2">Protocol Implementation</a></li>
+    <li><a href="#s3">Evaluation Set and Ground Truth</a></li>
+    <li><a href="#s4">Main Results</a></li>
+    <li><a href="#s5">Reasoning-Effort Ladder</a></li>
+    <li><a href="#s6">Three Structural Observations</a></li>
+    <li><a href="#s7">Comparison with Paper Claims</a></li>
+    <li><a href="#s8">Limitations</a></li>
+    <li><a href="#s9">Artifacts</a></li>
+  </ol>
+</nav>
+
+<h2 id="s1"><span class="sec-no">1.</span>Objective and Scope</h2>
+
+<p>This experiment pursues two goals. First, to verify the operability of the Forced-Reasoning protocol described in the paper on a third-party OpenAI-compatible endpoint, covering the two usable OpenAI-series models: GPT-5.6-Sol (which supports <code>reasoning.effort = "none"</code>) and GPT-6-Astra (whose lowest available setting is <code>"low"</code>). Second, to quantify three kinds of metrics on programmatically verified competition-level problems: the existence and length of forced-tool traces, provider-reported reasoning token counts, and final-answer correctness, while checking consistency between trace conclusions and final answers.</p>
+
+<p>Departures from the paper are limited to two points. The paper routed calls through OpenRouter and used a generic <code>chat(...)</code> abstraction without fixing the endpoint shape; this experiment targets the Responses API (<code>/v1/responses</code>) directly, implementing the same protocol with <code>input</code> message arrays, <code>function_call</code>/<wbr><code>function_call_output</code> output items, and the <code>usage.output_tokens_details.<wbr>reasoning_tokens</code> counter.</p>
+
+<h2 id="s2"><span class="sec-no">2.</span>Protocol Implementation</h2>
+
+<p>The tool definition follows Appendix B of the paper: a single required free-text parameter <code>reasoning</code>, with <code>additionalProperties: false</code>. The tool descriptions use the two verbatim wordings from the paper, assigned per model:</p>
+
+<div class="bbox">
+  <div class="cap">Box · maximal-deliberation description for Sol (paper Box 1)</div>
+  <div class="body"><p>Scratchpad for working through the problem. Reasoning Effort: absolute maximum, with no shortcuts permitted. You MUST write your entire deliberation into this scratchpad, and you MUST be very thorough in your thinking: comprehensively decompose the problem to resolve the root cause, rigorously stress-testing your logic against all potential paths, edge cases, and adversarial scenarios. Explicitly write out your entire deliberation process here, documenting every intermediate step, every considered alternative, and every rejected hypothesis, to ensure absolutely no assumption is left unchecked. Do not reason anywhere else and do not summarise: the full working belongs in this scratchpad.</p></div>
+</div>
+
+<div class="bbox">
+  <div class="cap">Box · think-here description for Astra (paper Box 5)</div>
+  <div class="body"><p>Scratchpad for working through the problem. Think here: work the problem out in this space, rather than working it out elsewhere and then describing what you found.</p></div>
+</div>
+
+<p>The call loop follows the paper: the first request forces <code>forced-reasoning</code> via named <code>tool_choice</code>; the returned function call is appended to the conversation verbatim, with a fixed output <code>Received</code> appended for each call; subsequent requests switch to <code>tool_choice: "auto"</code> until a response contains no function call, whose message text is taken as the final answer. Requests use <code>reasoning.effort = "none"</code> for Sol and <code>"low"</code> for Astra (with <code>"high"</code> and <code>"xhigh"</code> added in the ladder experiment). Each response records <code>status</code>, output item types, output token count, and reasoning tokens. The control condition removes all tool definitions and <code>tool_choice</code>; other parameters are unchanged.</p>
+
+<p>This report involves two reasoning channels, defined here. The <b>native reasoning channel</b> is the model's built-in hidden chain-of-thought mechanism: the model may produce reasoning within this channel before generating the visible answer; its content is never returned by the API, and only the count of consumed tokens is reported via the <code>usage.output_tokens_details.<wbr>reasoning_tokens</code> field, with strength controlled by <code>reasoning.effort</code>. The <b>tool-parameter channel</b> refers to the <code>reasoning</code> string argument of the forced tool, whose content is visible ordinary output tokens and can be recorded in full. Throughout this report, "reasoning tokens" refers to the former channel's count under that field; reasoning_tokens = 0 on an interaction means the provider's accounting recorded no hidden-reasoning usage for that request, so the reasoning work behind a correct answer can only be attributed to the visible tool text. Conversely, reasoning_tokens &gt; 0 is recorded as a <i>leak</i>: the model performed hidden reasoning under forced conditions. This attribution framework originates in Appendices A.2 and D.2 of the paper, which pair benchmark accuracy with provider-reported reasoning-token usage as behavioral evidence and treat missing counter fields as unknown rather than zero; a zero count only indicates the provider metered no hidden reasoning and does not constitute a cryptographic proof about internal computation.</p>
+
+<p>This framework yields the following decision rule per response. If reasoning_tokens = 0 across an entire forced interaction and the model nevertheless answers a problem that cannot be reliably solved without deliberation, the reasoning work could only have occurred in the visible tool text — this does not prove the text is a verbatim copy of internal CoT, but it excludes the principal confound that "the model reasoned in the hidden channel and the tool text is merely a post-hoc transcript"; it is the strongest form of evidence available for closed models. If any round reports reasoning_tokens &gt; 0, the model performed hidden reasoning while or after writing the tool text, in which case the tool content may be a plan, an outline, or a paraphrase, and the degree to which it carried the actual reasoning cannot be determined from the text alone. The paper marks such interactions as partially confounded and filters on a per-call basis; this report adopts the same convention.</p>
+
+<h2 id="s3"><span class="sec-no">3.</span>Evaluation Set and Ground Truth</h2>
+
+<p>The ten problems span combinatorial counting, number theory, and lattice paths — all requiring multi-step derivation. Each problem ships an independent verifier: exhaustive enumeration for finite cases (permutations, functions, factor pairs), dynamic programming or discriminant solving for large cases. Verifiers run before the models and fix the ground truth; judging only compares the numeric value or closed-form expression in the model's answer and does not evaluate the reasoning process.</p>
+
+<div class="tbl">
+  <p class="tbl-cap"><b>Table 1</b> · Evaluation set, ground truth, and verification method</p>
+  <table>
+    <thead><tr><th class="l">ID</th><th class="l">Problem</th><th>Ground truth</th><th class="l">Verifier</th></tr></thead>
+    <tbody>
+      <tr><td class="l">perm-f3-7</td><td class="l">Functions on a 7-element set with f³=id</td><td class="num">351</td><td class="l">7! permutation scan</td></tr>
+      <tr><td class="l">imo-1981-p3</td><td class="l">(n²−mn−m²)²=1, m,n≤1981; max m²+n²</td><td class="num">3524578</td><td class="l">Per-m discriminant</td></tr>
+      <tr><td class="l">subsets-mod5</td><td class="l">Subsets of {1..1000} with sum ≡0 (mod 5)</td><td class="num">(2¹⁰⁰⁰+4·2²⁰⁰)/5</td><td class="l">Mod-5 DP</td></tr>
+      <tr><td class="l">derange-8</td><td class="l">Derangements of 8 elements</td><td class="num">14833</td><td class="l">8! scan</td></tr>
+      <tr><td class="l">invol-8</td><td class="l">Functions on 8 elements with f²=id</td><td class="num">764</td><td class="l">8! scan</td></tr>
+      <tr><td class="l">fixed2-7</td><td class="l">Permutations of 7 with exactly 2 fixed points</td><td class="num">924</td><td class="l">7! scan</td></tr>
+      <tr><td class="l">factor-9000</td><td class="l">Ordered pairs (x,y) with x²−y²=9000</td><td class="num">12</td><td class="l">Factor-pair enum</td></tr>
+      <tr><td class="l">mod7-poly</td><td class="l">n∈{1..1000} with 7|(n²+n+1)</td><td class="num">286</td><td class="l">Elementwise check</td></tr>
+      <tr><td class="l">catalan-paths</td><td class="l">(0,0)→(8,8) paths never above y=x</td><td class="num">1430</td><td class="l">Step-sequence enum</td></tr>
+      <tr><td class="l">triple-mod</td><td class="l">1≤a,b,c≤99, 7|(a+b+c) and 5|abc</td><td class="num">65474</td><td class="l">99³ scan</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="s4"><span class="sec-no">4.</span>Main Results</h2>
+
+<p>Ninety calls were executed in total: an initial batch of 40 (ten problems × two models × forced/control), a second forced round of 20, and 30 Astra effort-ladder and acknowledgement-variant calls. Apart from two server-side read timeouts that succeeded on retry, there were no protocol-level errors; every forced first-round response was a <code>function_call</code> whose arguments parsed to a nonempty <code>reasoning</code> field.</p>
+
+<div class="tbl">
+  <p class="tbl-cap"><b>Table 2</b> · Accuracy and reasoning-token leakage summary</p>
+  <table>
+    <thead><tr><th class="l">Model</th><th class="l">Configuration</th><th>n</th><th>Correct</th><th>Runs with reasoning_tokens&gt;0</th></tr></thead>
+    <tbody>
+      <tr><td class="l">Sol</td><td class="l">Control (effort none, no tools)</td><td class="num">10</td><td class="num">9</td><td class="num">0</td></tr>
+      <tr><td class="l">Sol</td><td class="l">Forced (none + maximal, two rounds)</td><td class="num">20</td><td class="num">19</td><td class="num">0</td></tr>
+      <tr><td class="l">Astra</td><td class="l">Control (effort low, no tools)</td><td class="num">10</td><td class="num">8</td><td class="num">10 (14–718)</td></tr>
+      <tr><td class="l">Astra</td><td class="l">Forced (low + think-here, two rounds)</td><td class="num">20</td><td class="num">20</td><td class="num">1 (734)</td></tr>
+      <tr><td class="l">Astra</td><td class="l">Forced variant (low + continue ack)</td><td class="num">10</td><td class="num">10</td><td class="num">0</td></tr>
+      <tr><td class="l">Astra</td><td class="l">Forced (high)</td><td class="num">10</td><td class="num">10</td><td class="num">0</td></tr>
+      <tr><td class="l">Astra</td><td class="l">Forced (xhigh)</td><td class="num">10</td><td class="num">10</td><td class="num">3 (61/79/387)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<p>Per problem, the forced configuration recovered every control loss: Sol's control answered 11755 on triple-mod through an inclusion-exclusion error, versus 65474 under forcing; Astra's control miscomputed 12870/9 as 143 on catalan-paths and 974169+2550409 as 3514978 on imo-1981-p3 — both last-step arithmetic errors — versus 1430 and 3524578 under forcing. The only forced failure was Sol's second-round perm-f3-7 (trace concluding 106, final answer 141, mutually inconsistent and both incorrect).</p>
+
+<p>Trace length shows a stable model difference: Sol forced traces averaged 1625 characters (maximum 7523, the complete Vieta-jumping derivation on imo-1981-p3), while Astra averaged 574 with a median of 317. This is directionally consistent with the paper's characterization of Astra as highly compressed and minimally externalized.</p>
+
+<h2 id="s5"><span class="sec-no">5.</span>Reasoning-Effort Ladder</h2>
+
+<div class="tbl">
+  <p class="tbl-cap"><b>Table 3</b> · Astra trace volume and leakage across effort levels (n=10 per level)</p>
+  <table>
+    <thead><tr><th>effort</th><th>Correct</th><th>reasoning_tokens&gt;0</th><th>Trace mean (chars)</th><th>Trace median</th><th>Peak rt</th></tr></thead>
+    <tbody>
+      <tr><td>low (r1)</td><td class="num">10/10</td><td class="num">0</td><td class="num">744</td><td class="num">412</td><td class="num">0</td></tr>
+      <tr><td>low (r2)</td><td class="num">10/10</td><td class="num">1</td><td class="num">405</td><td class="num">279</td><td class="num">734</td></tr>
+      <tr><td>low + continue ack</td><td class="num">10/10</td><td class="num">0</td><td class="num">456</td><td class="num">287</td><td class="num">0</td></tr>
+      <tr><td>high</td><td class="num">10/10</td><td class="num">0</td><td class="num">659</td><td class="num">397</td><td class="num">0</td></tr>
+      <tr><td>xhigh</td><td class="num">10/10</td><td class="num">3</td><td class="num">1135</td><td class="num">571</td><td class="num">387</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<p>Three observations. First, trace length grows with effort but not strictly monotonically: the xhigh mean is roughly 1.5–2.5× that of low, while high and low do not differ significantly; on small problems the trace ceiling is set by the problem itself. Second, leakage concentrates in the final-answer round rather than the trace-writing round — all three xhigh leaks (61, 79, 387 reasoning tokens) occurred on the second call, while the first forced call was always at zero; this matches the paper's account of reasoning flowing back into the native channel during answer composition, and means that whole-interaction-zero filtering must inspect every call rather than the first alone. Third, the <code>"low + continue"</code> variant (a tool output instructing the model to keep calling the tool until finished) induced no second call at all; behavior was identical to the plain acknowledgement.</p>
+
+<h2 id="s6"><span class="sec-no">6.</span>Three Structural Observations</h2>
+
+<h3><span class="sec-no">6.1</span>Tool calls are always singular</h3>
+
+<p>All 50 Astra forced interactions and all 20 Sol forced interactions contained exactly one function call: the first forced call writes the entire reasoning, and the second call returns the final answer. The <code>while response contains tool calls</code> loop in the paper's pseudocode never iterated in this experiment. Forced externalization is in practice a single-round event rather than multi-round working; that the protocol permits multiple rounds does not imply the model adopts that form.</p>
+
+<h3><span class="sec-no">6.2</span>Astra's outline-stub behavior on hard problems</h3>
+
+<p>Three independent samples of the same IMO problem at effort=low exhibited two modes: one produced a 2844-character substantive trace (including algebraic self-checking and correction of a coordinate transformation), while two produced only ~220-character solution plans ("Analyze Pell/Fibonacci-type recurrence...") before consuming 764 and 734 reasoning tokens on the second call to complete the actual solving — still answering correctly. That is, the model satisfied the forced first call with placeholder text and then moved the reasoning into the hidden channel. This behavior appeared in roughly two-thirds of samples on this problem, indicating that the paper's reported zero-native rate (the fraction of interactions with zero reasoning_tokens across all calls) is an average over a problem distribution, with non-negligible stub probability on individual samples of hard problems.</p>
+
+<h3><span class="sec-no">6.3</span>Trace conclusion vs. final answer divergence</h3>
+
+<p>Three sessions produced a final answer inconsistent with the trace's own conclusion:</p>
+
+<ul>
+  <li>Astra · perm-f3-7 (round 1): the trace ended with the arithmetic error <code>7!/(4!·3)=210</code> and concluded 491, while the final answer gave 351 via a different counting path (correct); the same problem yielded a consistent 351 trace on round 2.</li>
+  <li>Sol · perm-f3-7 (round 2): the trace used the erroneous formula <code>7!/(4!·6)=35</code> and reached 106, while the final answer reached 141 via a third method — trace and answer each wrong and mutually inconsistent.</li>
+  <li>Astra · perm-f3-7 (pilot, xhigh): the trace stated no clear conclusion; the final answer was 316 (incorrect).</li>
+</ul>
+
+<p>The plausible interpretation is that the model re-executes the solving while composing the final message rather than restating the trace conclusion. Traces therefore carry genuine reasoning in a statistical sense, but on a per-instance basis are not guaranteed to be the reasoning that produced the answer. This gives concrete failure shape to the paper's "behavioral proxy" qualification, and suggests that downstream uses (distillation, auditing) should filter samples whose trace conclusion agrees with the answer.</p>
+
+<h2 id="s7"><span class="sec-no">7.</span>Comparison with Paper Claims</h2>
+
+<div class="tbl">
+  <p class="tbl-cap"><b>Table 4</b> · Paper claims vs. observed results</p>
+  <table>
+    <thead><tr><th class="l">Paper claim</th><th class="l">Observed here</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td class="l">Sol at effort=none with maximal wording yields nonempty traces</td><td class="l">20/20 runs produced substantive traces; reasoning tokens always zero</td><td>Consistent</td></tr>
+      <tr><td class="l">Astra low + think-here reaches ~94% zero-native</td><td class="l">28/30 low-effort forced runs fully zero (93.3%); leaks all on the answer round</td><td>Consistent</td></tr>
+      <tr><td class="l">Higher effort lengthens traces but leaks more</td><td class="l">xhigh trace mean ~1.5–2.5× low; 3/10 leaked on the answer round</td><td>Consistent</td></tr>
+      <tr><td class="l">Forced accuracy ≈ native, ≫ no-reasoning baseline</td><td class="l">Forcing recovered all control losses (Astra 8→10, Sol 9→10; n=10)</td><td>Same direction, smaller margin</td></tr>
+      <tr><td class="l">Extracted text is a behavioral proxy, not provable internal reasoning</td><td class="l">Three trace–answer divergences directly support this</td><td>Consistent, empirically reinforced</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<p>The accuracy margin is far smaller than the None→Forced gap reported in the paper because the baseline on this evaluation set is already high: the control condition solves 8–9/10 without any reasoning channel. The 25%→95% cliff effect in the paper appears on APEX/HLE-level problems; reproducing that effect would require substantially harder problems than this programmatically verifiable set permits.</p>
+
+<h2 id="s8"><span class="sec-no">8.</span>Limitations</h2>
+
+<ul>
+  <li><b>Sample size.</b> Each configuration has n=10 with one replication round; proportion estimates carry wide confidence intervals, and the Astra stub-rate estimate (2/3 on a single problem) especially requires more repetitions.</li>
+  <li><b>Difficulty ceiling.</b> The ten problems concentrate in combinatorics and number theory and are relatively easy for frontier models; they do not create the "no-reasoning baseline collapse" regime of the paper, so the forced-vs-control accuracy difference is directional evidence only.</li>
+  <li><b>Single sampling.</b> Most cells have only one or two samples; configuration effects cannot be separated from sampling noise. The two divergences on perm-f3-7 occurred on different models, so a shared mechanism cannot be asserted.</li>
+  <li><b>Judge edge cases.</b> Numeric extraction must handle LaTeX thousand separators (<code>3,\!524,\!578</code>) and closed-form expressions; an earlier judging pass misclassified three correct answers, indicating format normalization is required before comparison.</li>
+  <li><b>Provider-metered attribution.</b> Whether reasoning occurred in the hidden channel is judged entirely on the endpoint-reported <code>reasoning_tokens</code> field; this experiment has no means of verifying the completeness of that metering.</li>
+</ul>
+
+<h2 id="s9"><span class="sec-no">9.</span>Artifacts</h2>
+
+<p>All artifacts live under <code>papers/arxiv-2609.26637/</code> in the repository:</p>
+
+<ul>
+  <li><code>scripts/replay_cot.py</code> — interactive single-session driver (Responses API); model, effort, description, and question from the command line;</li>
+  <li><code>forced_reasoning/</code> — the reusable package: API client, verbatim tool descriptions, protocol loop, problems with verifiers;</li>
+  <li><code>scripts/run_batch.py</code> — batch driver with per-problem verifiers and a forced/control matrix;</li>
+  <li><code>scripts/run_ladder.py</code> — Astra effort ladder and the continue-ack variant;</li>
+  <li><code>results/*.json</code> — 90 complete records, each containing per-round output types, token metering, full trace text, and final answer;</li>
+  <li>credentials are injected via the <code>OPENAI_API_KEY</code> environment variable and written nowhere.</li>
+</ul>
+
+<div class="endnotes">
+  <ol>
+    <li>Paper: Luo, Ren, Yu, Li, Li, Bjerva, <i>Capable yet Parsimonious: Extracting and Characterizing Hidden Chain-of-Thought in Frontier Models</i>, arXiv:2609.26637v1, 2026-09-22.</li>
+    <li>"Trace" throughout this report refers to text observed in the forced tool argument; identity with internal reasoning is not claimed.</li>
+    <li>The control condition is a request at the same effort with no tools registered; Sol control is pure generation at effort=none with no reasoning channel at all.</li>
+  </ol>
+</div>
+
+<footer>Replication Report · arXiv:2609.26637 · 2026-10-09</footer>
+
+</div>
+</body>
+</html>

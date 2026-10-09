@@ -1,0 +1,35 @@
+{
+ "model": "gpt-6-astra",
+ "effort": "high",
+ "mode": "forced",
+ "traces": [
+  "We need count x²-y²=9000 positive. a=x-y b=x+y positive a<b same parity ab9000. Since even product same parity both even. Let a=2u b=2v then uv2250=2*3²*5³ u<v positive. divisor number (1+1)(2+1)(3+1)=24. 2250 not square so 12 unordered factor pairs each u<v yields x=u+v y=v-u positive. Count12. Provide succinct derivation factor 9000 and parity then count2250. No need further tools."
+ ],
+ "calls": [
+  {
+   "round": 0,
+   "status": "completed",
+   "output_types": [
+    "message",
+    "function_call"
+   ],
+   "output_tokens": 169,
+   "reasoning_tokens": 0,
+   "sec": 7.7
+  },
+  {
+   "round": 1,
+   "status": "completed",
+   "output_types": [
+    "message"
+   ],
+   "output_tokens": 213,
+   "reasoning_tokens": 0,
+   "sec": 7.5
+  }
+ ],
+ "answer": "Factor the equation:\n\\[\n(x-y)(x+y)=9000.\n\\]\nSince \\(x-y\\) and \\(x+y\\) have the same parity and their product is even, both must be even. Write\n\\[\nx-y=2a,\\qquad x+y=2b.\n\\]\nThen \\(ab=2250\\), and positivity of \\(x,y\\) requires \\(0<a<b\\). Conversely, each such factor pair gives exactly one solution:\n\\[\nx=a+b,\\qquad y=b-a.\n\\]\n\nNow\n\\[\n2250=2\\cdot3^2\\cdot5^3,\n\\]\nso it has \\((1+1)(2+1)(3+1)=24\\) positive divisors. Since \\(2250\\) is not a perfect square, these form \\(24/2=12\\) factor pairs with \\(a<b\\).\n\nThus the number of ordered pairs \\((x,y)\\) is \\(\\boxed{12}\\).",
+ "error": null,
+ "problem": "factor-9000",
+ "correct": true
+}

@@ -1,0 +1,25 @@
+{
+ "model": "gpt-5.6-sol",
+ "effort": "none",
+ "mode": "control",
+ "traces": [],
+ "calls": [
+  {
+   "round": 0,
+   "status": "completed",
+   "output_types": [
+    "message"
+   ],
+   "output_tokens": 191,
+   "reasoning_tokens": 0,
+   "sec": 7.5
+  }
+ ],
+ "answer": "We need\n\\[\nn^2+n+1\\equiv 0\\pmod 7.\n\\]\nTesting residues modulo \\(7\\), the solutions are\n\\[\nn\\equiv 2,4\\pmod 7,\n\\]\nsince \\(2^2+2+1=7\\) and \\(4^2+4+1=21\\).\n\nAmong \\(1,\\ldots,1000\\):\n\n- \\(n\\equiv2\\pmod7\\): \\(\\left\\lfloor\\frac{1000-2}{7}\\right\\rfloor+1=143\\) integers.\n- \\(n\\equiv4\\pmod7\\): \\(\\left\\lfloor\\frac{1000-4}{7}\\right\\rfloor+1=143\\) integers.\n\nTherefore, the total is\n\\[\n\\boxed{286}.\n\\]",
+ "error": null,
+ "problem": "mod7-poly",
+ "correct": true,
+ "judge_note": "nums tail=[286]",
+ "trace_tail_ints": [],
+ "trace_matches_expected": null
+}

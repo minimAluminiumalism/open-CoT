@@ -1,0 +1,25 @@
+{
+ "model": "gpt-5.6-sol",
+ "effort": "none",
+ "mode": "control",
+ "traces": [],
+ "calls": [
+  {
+   "round": 0,
+   "status": "completed",
+   "output_types": [
+    "message"
+   ],
+   "output_tokens": 281,
+   "reasoning_tokens": 0,
+   "sec": 11.7
+  }
+ ],
+ "answer": "Factor:\n\\[\nx^2-y^2=(x-y)(x+y)=9000.\n\\]\n\nLet\n\\[\na=x-y,\\qquad b=x+y.\n\\]\nThen \\(ab=9000\\), and since \\(x,y\\) are positive integers, \\(a,b\\) must be positive divisors of \\(9000\\) with:\n\n- \\(a<b\\),\n- \\(a\\) and \\(b\\) having the same parity.\n\nBecause \\(9000\\) is even, \\(a,b\\) must both be even. Write \\(a=2m,\\ b=2n\\), so\n\\[\nmn=2250,\\qquad m<n.\n\\]\n\nNow\n\\[\n2250=2\\cdot 3^2\\cdot 5^3,\n\\]\nso it has\n\\[\n(1+1)(2+1)(3+1)=24\n\\]\npositive divisors. Since \\(2250\\) is not a square, its divisors pair into \\(12\\) pairs \\((m,n)\\) with \\(m<n\\).\n\nEach such pair gives exactly one positive integer solution:\n\\[\nx=m+n,\\qquad y=n-m.\n\\]\n\nTherefore, the number of ordered pairs \\((x,y)\\) is\n\n\\[\n\\boxed{12}.\n\\]",
+ "error": null,
+ "problem": "factor-9000",
+ "correct": true,
+ "judge_note": "nums tail=[12]",
+ "trace_tail_ints": [],
+ "trace_matches_expected": null
+}

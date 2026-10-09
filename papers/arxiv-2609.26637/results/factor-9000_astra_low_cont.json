@@ -1,0 +1,35 @@
+{
+ "model": "gpt-6-astra",
+ "effort": "low",
+ "mode": "forced",
+ "traces": [
+  "Let a=x-y b=x+y positive a<b same parity and ab=9000. Both even since product even same parity. a=2u b=2v gives uv=2250=2*3^2*5^3; u<v and x=u+v y=v-u. Divisor count 2*3*4=24. N nonsquare hence 12 unordered unequal factor pairs. answer 12 with bijection and parity."
+ ],
+ "calls": [
+  {
+   "round": 0,
+   "status": "completed",
+   "output_types": [
+    "message",
+    "function_call"
+   ],
+   "output_tokens": 138,
+   "reasoning_tokens": 0,
+   "sec": 6.3
+  },
+  {
+   "round": 1,
+   "status": "completed",
+   "output_types": [
+    "message"
+   ],
+   "output_tokens": 206,
+   "reasoning_tokens": 0,
+   "sec": 10.3
+  }
+ ],
+ "answer": "Factor the equation:\n\\[\n(x-y)(x+y)=9000.\n\\]\nSince \\(x-y\\) and \\(x+y\\) have the same parity and their product is even, both must be even. Write\n\\[\nx-y=2a,\\qquad x+y=2b.\n\\]\nThen\n\\[\nab=2250,\\qquad 0<a<b.\n\\]\nConversely, each such factor pair gives exactly one solution\n\\[\n(x,y)=(a+b,b-a)\n\\]\nin positive integers.\n\nNow \\(2250=2\\cdot3^2\\cdot5^3\\), so it has\n\\[\n(1+1)(2+1)(3+1)=24\n\\]\npositive divisors. Since \\(2250\\) is not a perfect square, these form \\(24/2=12\\) factor pairs with \\(a<b\\).\n\nThus the number of ordered pairs is \\(\\boxed{12}\\).",
+ "error": null,
+ "problem": "factor-9000",
+ "correct": true
+}

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>复现报告 · Forced-Reasoning 协议（arXiv:2609.26637）</title>
+<style>
+  :root{
+    --ink:#111; --soft:#444; --rule:#111; --light-rule:#bbb;
+    --accent:#111; --paper:#fff; --box:#f5f5f5; --code-bg:#f4f4f4;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:#ececec; color:var(--ink);
+    font-family:"STIX Two Text","Source Serif Pro","Libertinus Serif","Charter",Georgia,"Times New Roman",
+                "Songti SC","STSong","Noto Serif CJK SC",serif;
+    font-size:17px; line-height:1.72;
+  }
+  .sheet{
+    max-width:860px; margin:0 auto; background:var(--paper);
+    padding:72px 72px 96px; box-shadow:0 0 0 1px #d8d8d8, 0 12px 48px rgba(0,0,0,.10);
+  }
+  @media (max-width:760px){ .sheet{padding:40px 22px 64px} body{font-size:16px} }
+
+  .doc-head{border-bottom:2.5px solid var(--rule); padding-bottom:26px; margin-bottom:34px}
+  .kicker{font-variant:small-caps; letter-spacing:.14em; color:var(--accent);
+          font-size:13px; text-align:center; margin-bottom:18px}
+  h1.title{font-size:27px; line-height:1.35; text-align:center; font-weight:700; margin:0 0 8px}
+  .subtitle{text-align:center; color:var(--soft); font-size:16.5px; margin:0 0 20px}
+  .byline{text-align:center; font-size:14.5px; color:var(--soft)}
+  .byline .names{font-variant:small-caps; letter-spacing:.05em; color:var(--ink); font-size:15.5px}
+  .rule-stack{border-top:1px solid var(--rule); margin-top:26px; padding-top:3px;
+              border-bottom:2.5px solid var(--rule); height:4px}
+
+  .abstract{margin:30px 6%; font-size:15px; line-height:1.68; text-align:justify; hyphens:auto}
+  .abstract .ab-label{display:block; text-align:center; font-variant:small-caps;
+                      letter-spacing:.12em; font-weight:600; margin-bottom:8px}
+  .abstract p{margin:.5em 0}
+
+  nav.toc{border:1px solid var(--light-rule); background:#f8f8f8; padding:18px 26px; margin:30px 0 8px}
+  nav.toc .toc-title{font-variant:small-caps; letter-spacing:.12em; font-weight:600;
+                     text-align:center; margin-bottom:10px}
+  nav.toc ol{margin:0; padding-left:1.6em; columns:2; column-gap:3em; font-size:14.5px}
+  nav.toc li{margin:2px 0}
+  nav.toc a{color:var(--ink); text-decoration:none}
+  nav.toc a:hover{color:var(--accent)}
+  @media (max-width:760px){ nav.toc ol{columns:1} }
+
+  h2{font-size:21px; font-weight:700; margin:2.1em 0 .55em; padding-top:.55em;
+     border-top:1.5px solid var(--rule)}
+  h2 .sec-no{color:var(--accent); margin-right:.45em}
+  h3{font-size:17.5px; font-weight:700; margin:1.6em 0 .4em}
+  h3 .sec-no{color:var(--accent); margin-right:.4em; font-size:15px}
+
+  p{margin:.62em 0; text-align:justify; text-justify:inter-ideograph; hyphens:auto}
+  sup.fn{font-size:.72em; color:var(--accent); font-weight:600}
+  a{color:var(--accent)}
+
+  .quote{margin:.9em 4%; padding:.7em 1.2em; border-left:2.5px solid var(--light-rule);
+         color:#2a2a2a; font-size:15.5px; font-style:italic; background:#f8f8f8}
+  .quote .who{display:block; font-style:normal; font-size:12.5px; font-variant:small-caps;
+              letter-spacing:.08em; color:var(--soft); margin-top:.5em}
+  .bbox{border:1px solid var(--rule); background:var(--box); margin:1.1em 0; font-size:14.5px}
+  .bbox .cap{background:#eee; border-bottom:1px solid var(--rule); padding:6px 14px;
+             font-variant:small-caps; letter-spacing:.08em; font-weight:600; font-size:13px}
+  .bbox .body{padding:12px 18px}
+  .bbox .body p{text-align:left; margin:.45em 0}
+
+  pre.code{font-family:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace; font-size:13px;
+           line-height:1.55; background:var(--code-bg); border:1px solid var(--light-rule);
+           padding:14px 18px; overflow-x:auto; margin:1em 0}
+  code{font-family:"SF Mono",Menlo,Consolas,monospace; font-size:.88em;
+       background:var(--code-bg); padding:.08em .3em; border-radius:2px;
+       overflow-wrap:anywhere}
+
+  .tbl{margin:1.2em 0; overflow-x:auto}
+  table{margin:0 auto; border-collapse:collapse; font-size:14.5px; min-width:60%}
+  .tbl-cap{font-size:13.5px; text-align:center; color:var(--soft); margin:0 0 6px; font-style:italic}
+  .tbl-cap b{font-style:normal; color:var(--ink)}
+  thead th{border-top:2.2px solid var(--rule); border-bottom:1.1px solid var(--rule);
+           padding:5px 12px; font-variant:small-caps; letter-spacing:.04em; text-align:center}
+  tbody td{padding:4.5px 12px; text-align:center; border-bottom:.5px solid #e2e2e2}
+  tbody tr:last-child td{border-bottom:2.2px solid var(--rule)}
+  td.l,th.l{text-align:left}
+  td.num{font-variant-numeric:tabular-nums}
+
+  figure{margin:1.4em 0; text-align:center}
+  figure svg{max-width:100%}
+  figcaption{font-size:13.5px; color:var(--soft); font-style:italic; margin-top:8px;
+             text-align:justify; max-width:88%; margin-left:auto; margin-right:auto}
+  figcaption b{font-style:normal; color:var(--ink)}
+
+  ul,ol{padding-left:1.7em}
+  li{margin:.3em 0; text-align:justify}
+  .divider{border:none; border-top:1px solid var(--light-rule); margin:2.2em auto; width:38%}
+  .endnotes{font-size:14px; color:var(--soft); border-top:1.5px solid var(--rule);
+            padding-top:.8em; margin-top:2.6em}
+  .endnotes ol{padding-left:1.5em}
+  footer{margin-top:3em; padding-top:1em; border-top:2.5px solid var(--rule);
+         font-size:12.5px; color:var(--soft); text-align:center; font-variant:small-caps;
+         letter-spacing:.08em}
+
+  @media print{
+    body{background:#fff; font-size:11.5pt; line-height:1.6}
+    .sheet{max-width:none; margin:0; padding:0; box-shadow:none}
+    h2{break-after:avoid}
+    h3{break-after:avoid}
+    table,.bbox,figure,pre.code{break-inside:avoid}
+    a{color:var(--ink); text-decoration:none}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header class="doc-head">
+  <div class="kicker">Replication Report</div>
+  <h1 class="title">Forced-Reasoning 协议在 OpenAI 兼容端点上的实证复现：<br>GPT-5.6-Sol 与 GPT-6-Astra</h1>
+  <p class="subtitle">arXiv:2609.26637v1 所述方法的独立复现与扩展观察</p>
+  <p class="byline">
+    <span class="names">实验记录 · 2026-10-09</span><br>
+    Responses API · 90 次受控调用
+  </p>
+  <p class="byline" style="margin-top:10px"><a href="report.en.html">English version</a></p>
+  <div class="rule-stack"></div>
+</header>
+
+<div class="abstract">
+  <span class="ab-label">摘要</span>
+  <p>本报告记录对 arXiv:2609.26637 所提出 Forced-Reasoning 协议的复现实验。实验在 OpenAI 兼容端点上以 Responses API 实现协议：注册仅含单一字符串参数的自定义工具 <code>forced-reasoning</code>，首轮以命名 <code>tool_choice</code> 强制调用，记录其 <code>reasoning</code> 参数后以固定回执返回，随后恢复自动工具选择直至产生最终回答。评测集由十道竞赛级问题构成，每题均附独立的程序化真值验证器，不依赖人工记忆或模型自评。共执行 90 次调用：GPT-5.6-Sol 与 GPT-6-Astra 各含无工具对照组与多配置实验组。结果显示：（i）两模型均被成功诱导将推理写入工具参数，Sol 在全部 20 次受迫调用中 reasoning tokens 为零；（ii）受迫配置下两模型正确率均不低于无工具对照，Astra 在全部 50 次受迫调用中取得 50/50；（iii）所有受迫交互均仅包含一次工具调用，协议的多轮循环结构未被触发；（iv）三次观察到工具轨迹结论与最终答案不一致，且一次观察到模型在写入提纲式占位文本后于原生推理通道完成实质求解。上述结果与论文的定性结论一致，同时为"提取轨迹是行为代理而非内部思维链逐字副本"这一限定提供了直接的反例证据。</p>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">目录</div>
+  <ol>
+    <li><a href="#s1">实验目的与范围</a></li>
+    <li><a href="#s2">协议实现</a></li>
+    <li><a href="#s3">评测集与真值验证</a></li>
+    <li><a href="#s4">主要结果</a></li>
+    <li><a href="#s5">推理强度阶梯实验</a></li>
+    <li><a href="#s6">行为层面的三项结构观察</a></li>
+    <li><a href="#s7">与论文结论的对照</a></li>
+    <li><a href="#s8">局限性</a></li>
+    <li><a href="#s9">产物清单</a></li>
+  </ol>
+</nav>
+
+<h2 id="s1"><span class="sec-no">1.</span>实验目的与范围</h2>
+
+<p>本实验面向两个目标。其一，验证论文所述 Forced-Reasoning 协议在第三方 OpenAI 兼容端点上的可操作性，覆盖论文中两个可用的 OpenAI 系模型：GPT-5.6-Sol（支持 <code>reasoning.effort = "none"</code>）与 GPT-6-Astra（最低可用强度为 <code>"low"</code>）。其二，在程序化验证的竞赛级问题上量化三类指标：受迫工具轨迹的存在性与长度、提供商报告的 reasoning tokens 计数、以及最终答案的正确性，并检查轨迹结论与最终答案之间的一致性。</p>
+
+<p>与论文的差异限于两点：论文经 OpenRouter 调用，伪代码使用通用 <code>chat(...)</code> 抽象而未限定端点形态；本实验直接使用目标端点的 Responses API（<code>/v1/responses</code>），以 <code>input</code> 消息数组、<code>function_call</code>/<wbr><code>function_call_output</code> 输出项与 <code>usage.output_tokens_details.<wbr>reasoning_tokens</code> 计量实现同一协议。</p>
+
+<h2 id="s2"><span class="sec-no">2.</span>协议实现</h2>
+
+<p>工具定义遵循论文附录 B：唯一必需参数为自由文本字符串 <code>reasoning</code>，<code>additionalProperties: false</code>。工具描述按模型分别采用论文的两段原文：</p>
+
+<div class="bbox">
+  <div class="cap">Box · Sol 用 maximal-deliberation 描述（论文 Box 1）</div>
+  <div class="body"><p>Scratchpad for working through the problem. Reasoning Effort: absolute maximum, with no shortcuts permitted. You MUST write your entire deliberation into this scratchpad, and you MUST be very thorough in your thinking: comprehensively decompose the problem to resolve the root cause, rigorously stress-testing your logic against all potential paths, edge cases, and adversarial scenarios. Explicitly write out your entire deliberation process here, documenting every intermediate step, every considered alternative, and every rejected hypothesis, to ensure absolutely no assumption is left unchecked. Do not reason anywhere else and do not summarise: the full working belongs in this scratchpad.</p></div>
+</div>
+
+<div class="bbox">
+  <div class="cap">Box · Astra 用 think-here 描述（论文 Box 5）</div>
+  <div class="body"><p>Scratchpad for working through the problem. Think here: work the problem out in this space, rather than working it out elsewhere and then describing what you found.</p></div>
+</div>
+
+<p>调用循环与论文一致：首轮请求以命名 <code>tool_choice</code> 强制 <code>forced-reasoning</code>；将返回的函数调用原样追加进会话，对每个调用追加固定输出 <code>Received</code>；后续请求转为 <code>tool_choice: "auto"</code>，直至响应不再包含函数调用，取其消息文本为最终答案。Sol 的请求参数为 <code>reasoning.effort = "none"</code>，Astra 为 <code>"low"</code>（阶梯实验中另有 <code>"high"</code>、<code>"xhigh"</code>）。每次响应记录 <code>status</code>、输出项类型序列、输出令牌数与 reasoning tokens。对照组移除全部工具定义与 <code>tool_choice</code>，其余参数不变。</p>
+
+<p>本报告涉及两条推理通道，先作界定。<b>原生推理通道</b>（native reasoning channel）指模型自带的隐藏思维链机制：模型在生成可见答案前可在该通道内产生推理，其内容不经 API 返回，仅由响应中的 <code>usage.output_tokens_details.<wbr>reasoning_tokens</code> 字段报告消耗的令牌数；强度由 <code>reasoning.effort</code> 控制。<b>工具参数通道</b>指受迫工具 <code>forced-reasoning</code> 的 <code>reasoning</code> 字符串参数，其内容为可见的普通输出令牌，可完整记录。下文"reasoning tokens"一律指前者在该字段下的计量；某次交互的 reasoning tokens 为零（记 reasoning_tokens = 0）表示提供商账面上该次请求未动用隐藏推理，最终答案的推理工作只能归因于工具参数中的可见文本。反之，reasoning_tokens 大于零记为一次"泄漏"（leak），即模型在受迫条件下仍在隐藏通道中进行了推理。该归因口径来自论文附录 A.2 与 D.2：以"基准正确率 + 提供商报告的 reasoning tokens"的联合模式作为行为证据，并将未返回计数字段的响应记为未知而非零；零计数仅表明提供商未对隐藏推理计量，不构成对内部计算的密码学证明。</p>
+
+<p>上述口径对每条响应构成如下判定逻辑。若一次受迫交互全程 reasoning_tokens = 0，则提供商账面上模型未动用隐藏通道；此时若模型仍正确回答了仅凭直觉无法可靠求解的问题，推理工作只可能发生在可见的工具参数文本中——这并不能证明该文本逐字等于内部思维链，但排除了"模型在隐藏通道完成推理、工具文本仅为事后转述"这一主要混淆变量，是闭源模型上可取得的最强证据形态。若某轮响应 reasoning_tokens &gt; 0，则表明模型在写入工具文本的同时或之后仍在隐藏通道中进行了推理，此时工具参数中的内容可能只是计划、提纲或转述，其实际承担推理工作的程度无法从文本本身判定。论文据此将此类交互标记为部分混淆（partially confounded），并在分析中按逐轮计量过滤；本报告沿用同一约定。</p>
+
+<h2 id="s3"><span class="sec-no">3.</span>评测集与真值验证</h2>
+
+<p>十道问题选自组合计数、数论与格路径等需要多步推导的类型，每题附独立验证器：有限情形采用穷举（排列、函数、因子对），大情形采用动态规划或判别式求根。验证器先于模型运行并固定真值，判分仅比对模型答案中的数值或闭式表达，不评估推理过程。</p>
+
+<div class="tbl">
+  <p class="tbl-cap"><b>表 1</b> · 评测集、真值与验证方式</p>
+  <table>
+    <thead><tr><th class="l">标识</th><th class="l">问题概要</th><th>真值</th><th class="l">验证方式</th></tr></thead>
+    <tbody>
+      <tr><td class="l">perm-f3-7</td><td class="l">七元集上满足 f³=id 的函数数</td><td class="num">351</td><td class="l">7! 排列穷举</td></tr>
+      <tr><td class="l">imo-1981-p3</td><td class="l">(n²−mn−m²)²=1，m,n≤1981，求 m²+n² 最大值</td><td class="num">3524578</td><td class="l">逐 m 判别式求根</td></tr>
+      <tr><td class="l">subsets-mod5</td><td class="l">{1..1000} 中元素和 ≡0 (mod 5) 的子集数</td><td class="num">(2¹⁰⁰⁰+4·2²⁰⁰)/5</td><td class="l">模 5 动态规划</td></tr>
+      <tr><td class="l">derange-8</td><td class="l">八元错位排列数</td><td class="num">14833</td><td class="l">8! 排列穷举</td></tr>
+      <tr><td class="l">invol-8</td><td class="l">八元集上满足 f²=id 的函数数</td><td class="num">764</td><td class="l">8! 排列穷举</td></tr>
+      <tr><td class="l">fixed2-7</td><td class="l">恰有两个不动点的七元排列数</td><td class="num">924</td><td class="l">7! 排列穷举</td></tr>
+      <tr><td class="l">factor-9000</td><td class="l">x²−y²=9000 的正整数有序对数</td><td class="num">12</td><td class="l">因子对枚举</td></tr>
+      <tr><td class="l">mod7-poly</td><td class="l">n∈{1..1000} 使 7|(n²+n+1) 的个数</td><td class="num">286</td><td class="l">逐项检验</td></tr>
+      <tr><td class="l">catalan-paths</td><td class="l">(0,0)→(8,8) 不越过对角线的格路径数</td><td class="num">1430</td><td class="l">步序列枚举</td></tr>
+      <tr><td class="l">triple-mod</td><td class="l">1≤a,b,c≤99，7|(a+b+c) 且 5|abc 的有序三元组数</td><td class="num">65474</td><td class="l">99³ 穷举</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="s4"><span class="sec-no">4.</span>主要结果</h2>
+
+<p>共执行 90 次调用：首轮批次 40 次（十题 × 两模型 × 受迫/对照），第二轮受迫复测 20 次，Astra 强度阶梯与回执变体 30 次。除两次服务端读超时后重试成功外，无协议级错误；全部受迫请求的首轮响应均为 <code>function_call</code> 且参数可解析出非空 <code>reasoning</code> 字段。</p>
+
+<div class="tbl">
+  <p class="tbl-cap"><b>表 2</b> · 正确率与 reasoning tokens 泄漏汇总</p>
+  <table>
+    <thead><tr><th class="l">模型</th><th class="l">配置</th><th>样本数</th><th>正确</th><th>reasoning_tokens&gt;0 的样本</th></tr></thead>
+    <tbody>
+      <tr><td class="l">Sol</td><td class="l">对照（effort none，无工具）</td><td class="num">10</td><td class="num">9</td><td class="num">0</td></tr>
+      <tr><td class="l">Sol</td><td class="l">受迫（none + maximal，两轮）</td><td class="num">20</td><td class="num">19</td><td class="num">0</td></tr>
+      <tr><td class="l">Astra</td><td class="l">对照（effort low，无工具）</td><td class="num">10</td><td class="num">8</td><td class="num">10（14–718 个）</td></tr>
+      <tr><td class="l">Astra</td><td class="l">受迫（low + think-here，两轮）</td><td class="num">20</td><td class="num">20</td><td class="num">1（734 个）</td></tr>
+      <tr><td class="l">Astra</td><td class="l">受迫变体（low + continue 回执）</td><td class="num">10</td><td class="num">10</td><td class="num">0</td></tr>
+      <tr><td class="l">Astra</td><td class="l">受迫（high）</td><td class="num">10</td><td class="num">10</td><td class="num">0</td></tr>
+      <tr><td class="l">Astra</td><td class="l">受迫（xhigh）</td><td class="num">10</td><td class="num">10</td><td class="num">3（61/79/387 个）</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<p>逐题层面，受迫配置修正了全部对照组失分：Sol 对照组在 triple-mod 上因容斥计数错误给出 11755，受迫后为 65474；Astra 对照组在 catalan-paths 上将 12870/9 误算为 143、在 imo-1981-p3 上将 974169+2550409 误算为 3514978，两处均为末步算术错误，受迫后分别为 1430 与 3524578。唯一受迫失败样本为 Sol 第二轮的 perm-f3-7（轨迹结论 106、最终答案 141，二者互不相同且均不正确）。</p>
+
+<p>轨迹长度呈稳定的模型差异：Sol 受迫轨迹均值 1625 字符（最大 7523，imo-1981-p3 的完整 Vieta-jumping 推导），Astra 均值 574 字符、中位数 317。这与论文对 Astra"高压缩、低外化"的刻画方向一致。</p>
+
+<h2 id="s5"><span class="sec-no">5.</span>推理强度阶梯实验</h2>
+
+<div class="tbl">
+  <p class="tbl-cap"><b>表 3</b> · Astra 各 effort 档位的轨迹量与泄漏（n=10 每档）</p>
+  <table>
+    <thead><tr><th>effort</th><th>正确</th><th>reasoning_tokens&gt;0 样本</th><th>trace 均值（字符）</th><th>trace 中位</th><th>reasoning_tokens 峰值</th></tr></thead>
+    <tbody>
+      <tr><td>low（r1）</td><td class="num">10/10</td><td class="num">0</td><td class="num">744</td><td class="num">412</td><td class="num">0</td></tr>
+      <tr><td>low（r2）</td><td class="num">10/10</td><td class="num">1</td><td class="num">405</td><td class="num">279</td><td class="num">734</td></tr>
+      <tr><td>low + continue 回执</td><td class="num">10/10</td><td class="num">0</td><td class="num">456</td><td class="num">287</td><td class="num">0</td></tr>
+      <tr><td>high</td><td class="num">10/10</td><td class="num">0</td><td class="num">659</td><td class="num">397</td><td class="num">0</td></tr>
+      <tr><td>xhigh</td><td class="num">10/10</td><td class="num">3</td><td class="num">1135</td><td class="num">571</td><td class="num">387</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<p>三点观察。第一，轨迹长度随 effort 增长但不严格单调：xhigh 均值约为 low 的 1.5–2.5 倍，而 high 与 low 差异不显著；在小规模题目上轨迹量的天花板由题目本身决定。第二，泄漏集中发生于最终回答轮而非轨迹生成轮——xhigh 的三次泄漏（61、79、387 个 reasoning tokens）全部出现在第二轮，首轮受迫调用处 reasoning_tokens 恒为零；这与论文关于"推理在答案整理阶段回流原生通道"的记述一致，意味着若要筛选"全程未动用隐藏推理"的样本（论文记为 whole-interaction-zero），需对每一轮请求的 reasoning_tokens 分别检查而非只看首轮。第三，<code>"low + continue 回执"</code>变体（在工具输出中要求未完成时继续调用工具）未诱发任何第二次调用，行为与普通回执无差异。</p>
+
+<h2 id="s6"><span class="sec-no">6.</span>行为层面的三项结构观察</h2>
+
+<h3><span class="sec-no">6.1</span>工具调用恒为单次</h3>
+
+<p>全部 50 次 Astra 受迫交互与 20 次 Sol 受迫交互均恰好包含一次函数调用：首轮受迫写入全部推理，第二轮直接返回最终答案。论文伪代码中 <code>while response contains tool calls</code> 的循环结构在本实验中从未实际迭代。受迫外化在实践中是单轮事件而非多轮演算，协议允许多轮并不意味模型会采用该形态。</p>
+
+<h3><span class="sec-no">6.2</span>Astra 在难题上的提纲式占位行为</h3>
+
+<p>同一 IMO 问题在 effort=low 下的三次独立采样呈现两种模式：一次产生 2844 字符的实质轨迹（含对坐标变换的代数自检与修正），两次仅产生约 220 字符的求解计划（"Analyze Pell/Fibonacci-type recurrence..."），随后在第二轮调用中消耗 764 与 734 个 reasoning tokens 完成实质求解并答对。即模型以占位文本满足首轮强制调用，再将推理转移至隐藏通道。该行为在本题上的出现比例约为三分之二，表明论文报告的 zero-native 比率（即整个交互中 reasoning_tokens 恒为零的样本占比）是跨题目分布的平均值，在单题单次采样上存在不可忽视的占位概率。</p>
+
+<h3><span class="sec-no">6.3</span>轨迹结论与最终答案的脱钩</h3>
+
+<p>三次观察到受迫轨迹的最终结论与可见答案不一致：</p>
+
+<ul>
+  <li>Astra · perm-f3-7（第一轮）：轨迹以 <code>7!/(4!·3)=210</code> 的算术错误收尾、结论 491，最终答案经另一计数路径给出 351（正确）；第二轮复测中同一题目轨迹给出 351 并一致。</li>
+  <li>Sol · perm-f3-7（第二轮）：轨迹以 <code>7!/(4!·6)=35</code> 的公式错误得到 106，最终答案又以第三种计数得到 141，轨迹与答案各自错误且互不相同。</li>
+  <li>Astra · perm-f3-7（预实验 xhigh）：轨迹未给出明确结论，最终答案 316（不正确）。</li>
+</ul>
+
+<p>该现象的可行解释为：模型在生成最终消息时重新执行求解，而非复述轨迹结论。轨迹因此在统计意义上携带真实推理，在逐条意义上不保证是产生答案的那份推理。这为论文"behavioral proxy"限定提供了具体的失败形态，也提示下游使用（蒸馏、审计）时应按"轨迹结论与答案一致"过滤样本。</p>
+
+<h2 id="s7"><span class="sec-no">7.</span>与论文结论的对照</h2>
+
+<div class="tbl">
+  <p class="tbl-cap"><b>表 4</b> · 论文声明与本实验观察的对照</p>
+  <table>
+    <thead><tr><th class="l">论文声明</th><th class="l">本实验观察</th><th>一致性</th></tr></thead>
+    <tbody>
+      <tr><td class="l">Sol 于 effort=none 下经 maximal 措辞可提取非空推理</td><td class="l">20/20 样本产出实质轨迹，reasoning tokens 恒为零</td><td>一致</td></tr>
+      <tr><td class="l">Astra low + think-here 的 zero-native 比率约 94%</td><td class="l">30 次 low 档受迫中 28 次全程为零（93.3%），泄漏均发生于回答轮</td><td>一致</td></tr>
+      <tr><td class="l">effort 升高使轨迹变长但泄漏增多</td><td class="l">xhigh 轨迹均值约为 low 的 1.5–2.5 倍，且 3/10 在回答轮泄漏</td><td>一致</td></tr>
+      <tr><td class="l">受迫准确率接近原生、显著高于无推理基线</td><td class="l">受迫修正全部对照失分（Astra 8→10，Sol 9→10，n=10）</td><td>方向一致，幅度受限</td></tr>
+      <tr><td class="l">提取文本为行为代理，非可证的内部推理</td><td class="l">三次轨迹-答案脱钩直接支持该限定</td><td>一致且有实证强化</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<p>正确率提升的幅度远小于论文报告的 None→Forced 差距，原因在于本评测集对两模型而言基线过高：对照组在不调用任何推理通道的条件下已达 8–9/10。论文中 25%→95% 的悬崖效应出现于 APEX/HLE 级别的题目；要复现该效应需显著提高题目难度，超出本批可程序化验证题目的范围。</p>
+
+<h2 id="s8"><span class="sec-no">8.</span>局限性</h2>
+
+<ul>
+  <li><b>样本规模。</b>每配置 n=10、复测一轮，比例估计的置信区间较宽；Astra 占位行为的比例估计（2/3 于单题）尤其需要更多重复。</li>
+  <li><b>题目难度分布。</b>十题集中于组合与数论，且对前沿模型偏易，未能制造论文中"无推理基线崩溃"的区间；forced 与 control 的正确率差异因此只具方向性。</li>
+  <li><b>单次采样。</b>多数单元仅一至两个样本，未能分离配置效应与采样噪声；perm-f3-7 上的两次脱钩分别出现于不同模型，尚不能断定其机制相同。</li>
+  <li><b>判分器边界。</b>数值提取须处理 LaTeX 千分位（<code>3,\!524,\!578</code>）与闭式表达两种形态；初版判分曾将三份正确答案误判，提示对长整数应做格式归一化后再比对。</li>
+  <li><b>归因依赖提供商计量。</b>对推理是否发生于隐藏通道的判断完全依赖端点报告的 <code>reasoning_tokens</code> 字段，本实验无手段验证该计量的完整性。</li>
+</ul>
+
+<h2 id="s9"><span class="sec-no">9.</span>产物清单</h2>
+
+<p>全部实验产物位于仓库 <code>papers/arxiv-2609.26637/</code> 目录：</p>
+
+<ul>
+  <li><code>scripts/replay_cot.py</code>——单题交互式复现脚本（Responses API），命令行指定模型、effort、工具描述与题目；</li>
+  <li><code>forced_reasoning/</code>——可复用包：API 客户端、论文原文工具描述、协议循环、带验证器的题库；</li>
+  <li><code>scripts/run_batch.py</code>——批量驱动，含十题验证器与受迫/对照矩阵；</li>
+  <li><code>scripts/run_ladder.py</code>——Astra effort 阶梯与 continue 回执变体；</li>
+  <li><code>results/*.json</code>——90 份完整记录，每份含逐轮输出类型、令牌计量、轨迹全文与最终答案；</li>
+  <li>密钥经环境变量 <code>OPENAI_API_KEY</code> 注入，端点地址经 <code>OPENAI_BASE_URL</code> 配置，均未写入任何文件。</li>
+</ul>
+
+<div class="endnotes">
+  <ol>
+    <li>论文：Luo, Ren, Yu, Li, Li, Bjerva, <i>Capable yet Parsimonious: Extracting and Characterizing Hidden Chain-of-Thought in Frontier Models</i>, arXiv:2609.26637v1, 2026-09-22.</li>
+    <li>本报告中的"轨迹"（trace）一律指受迫工具参数中观测到的文本，与模型内部推理的同一性不在主张范围内。</li>
+    <li>对照组在此指同 effort 下不注册工具的请求；Sol 对照即 effort=none 且无任何推理通道的纯生成。</li>
+  </ol>
+</div>
+
+<footer>Replication Report · arXiv:2609.26637 · 2026-10-09</footer>
+
+</div>
+</body>
+</html>
