@@ -128,7 +128,7 @@
 
 <div class="abstract">
   <span class="ab-label">摘要</span>
-  <p>本报告记录对 arXiv:2609.26637 所提出 Forced-Reasoning 协议的复现实验。实验在 OpenAI 兼容端点上以 Responses API 实现协议：注册仅含单一字符串参数的自定义工具 <code>forced-reasoning</code>，首轮以命名 <code>tool_choice</code> 强制调用，记录其 <code>reasoning</code> 参数后以固定回执返回，随后恢复自动工具选择直至产生最终回答。评测集由十道竞赛级问题构成，每题均附独立的程序化真值验证器，不依赖人工记忆或模型自评。共执行 90 次调用：GPT-5.6-Sol 与 GPT-6-Astra 各含无工具对照组与多配置实验组。结果显示：（i）两模型均被成功诱导将推理写入工具参数，Sol 在全部 20 次受迫调用中 reasoning tokens 为零；（ii）受迫配置下两模型正确率均不低于无工具对照，Astra 在全部 50 次受迫调用中取得 50/50；（iii）所有受迫交互均仅包含一次工具调用，协议的多轮循环结构未被触发；（iv）三次观察到工具轨迹结论与最终答案不一致，且一次观察到模型在写入提纲式占位文本后于原生推理通道完成实质求解。上述结果与论文的定性结论一致，同时为"提取轨迹是行为代理而非内部思维链逐字副本"这一限定提供了直接的反例证据。</p>
+  <p>本报告记录对 arXiv:2609.26637 所提出 Forced-Reasoning 协议的复现实验。实验在 OpenAI 兼容端点上以 Responses API 实现协议：注册仅含单一字符串参数的自定义工具 <code>forced-reasoning</code>，首轮以命名 <code>tool_choice</code> 强制调用，记录其 <code>reasoning</code> 参数后以固定回执返回，随后恢复自动工具选择直至产生最终回答。评测集由十道竞赛级问题构成，每题均附独立的程序化真值验证器，不依赖人工记忆或模型自评。共执行 90 次调用：GPT-5.6-Sol 与 GPT-6-Astra 各含无工具对照组与多配置实验组。结果显示：（i）两模型均被成功诱导将推理写入工具参数，Sol 在全部 20 次强制调用中 reasoning tokens 为零；（ii）强制配置下两模型正确率均不低于无工具对照，Astra 在全部 50 次强制调用中取得 50/50；（iii）所有强制交互均仅包含一次工具调用，协议的多轮循环结构未被触发；（iv）三次观察到工具轨迹结论与最终答案不一致，且一次观察到模型在写入提纲式占位文本后于原生推理通道完成实质求解。上述结果与论文的定性结论一致，同时为"提取轨迹是行为代理而非内部思维链逐字副本"这一限定提供了直接的反例证据。</p>
 </div>
 
 <nav class="toc">
@@ -148,7 +148,7 @@
 
 <h2 id="s1"><span class="sec-no">1.</span>实验目的与范围</h2>
 
-<p>本实验面向两个目标。其一，验证论文所述 Forced-Reasoning 协议在第三方 OpenAI 兼容端点上的可操作性，覆盖论文中两个可用的 OpenAI 系模型：GPT-5.6-Sol（支持 <code>reasoning.effort = "none"</code>）与 GPT-6-Astra（最低可用强度为 <code>"low"</code>）。其二，在程序化验证的竞赛级问题上量化三类指标：受迫工具轨迹的存在性与长度、提供商报告的 reasoning tokens 计数、以及最终答案的正确性，并检查轨迹结论与最终答案之间的一致性。</p>
+<p>本实验面向两个目标。其一，验证论文所述 Forced-Reasoning 协议在第三方 OpenAI 兼容端点上的可操作性，覆盖论文中两个可用的 OpenAI 系模型：GPT-5.6-Sol（支持 <code>reasoning.effort = "none"</code>）与 GPT-6-Astra（最低可用强度为 <code>"low"</code>）。其二，在程序化验证的竞赛级问题上量化三类指标：强制工具轨迹的存在性与长度、提供商报告的 reasoning tokens 计数、以及最终答案的正确性，并检查轨迹结论与最终答案之间的一致性。</p>
 
 <p>与论文的差异限于两点：论文经 OpenRouter 调用，伪代码使用通用 <code>chat(...)</code> 抽象而未限定端点形态；本实验直接使用目标端点的 Responses API（<code>/v1/responses</code>），以 <code>input</code> 消息数组、<code>function_call</code>/<wbr><code>function_call_output</code> 输出项与 <code>usage.output_tokens_details.<wbr>reasoning_tokens</code> 计量实现同一协议。</p>
 
@@ -168,9 +168,9 @@
 
 <p>调用循环与论文一致：首轮请求以命名 <code>tool_choice</code> 强制 <code>forced-reasoning</code>；将返回的函数调用原样追加进会话，对每个调用追加固定输出 <code>Received</code>；后续请求转为 <code>tool_choice: "auto"</code>，直至响应不再包含函数调用，取其消息文本为最终答案。Sol 的请求参数为 <code>reasoning.effort = "none"</code>，Astra 为 <code>"low"</code>（阶梯实验中另有 <code>"high"</code>、<code>"xhigh"</code>）。每次响应记录 <code>status</code>、输出项类型序列、输出令牌数与 reasoning tokens。对照组移除全部工具定义与 <code>tool_choice</code>，其余参数不变。</p>
 
-<p>本报告涉及两条推理通道，先作界定。<b>原生推理通道</b>（native reasoning channel）指模型自带的隐藏思维链机制：模型在生成可见答案前可在该通道内产生推理，其内容不经 API 返回，仅由响应中的 <code>usage.output_tokens_details.<wbr>reasoning_tokens</code> 字段报告消耗的令牌数；强度由 <code>reasoning.effort</code> 控制。<b>工具参数通道</b>指受迫工具 <code>forced-reasoning</code> 的 <code>reasoning</code> 字符串参数，其内容为可见的普通输出令牌，可完整记录。下文"reasoning tokens"一律指前者在该字段下的计量；某次交互的 reasoning tokens 为零（记 reasoning_tokens = 0）表示提供商账面上该次请求未动用隐藏推理，最终答案的推理工作只能归因于工具参数中的可见文本。反之，reasoning_tokens 大于零记为一次"泄漏"（leak），即模型在受迫条件下仍在隐藏通道中进行了推理。该归因口径来自论文附录 A.2 与 D.2：以"基准正确率 + 提供商报告的 reasoning tokens"的联合模式作为行为证据，并将未返回计数字段的响应记为未知而非零；零计数仅表明提供商未对隐藏推理计量，不构成对内部计算的密码学证明。</p>
+<p>本报告涉及两条推理通道，先作界定。<b>原生推理通道</b>（native reasoning channel）指模型自带的隐藏思维链机制：模型在生成可见答案前可在该通道内产生推理，其内容不经 API 返回，仅由响应中的 <code>usage.output_tokens_details.<wbr>reasoning_tokens</code> 字段报告消耗的令牌数；强度由 <code>reasoning.effort</code> 控制。<b>工具参数通道</b>指强制工具 <code>forced-reasoning</code> 的 <code>reasoning</code> 字符串参数，其内容为可见的普通输出令牌，可完整记录。下文"reasoning tokens"一律指前者在该字段下的计量；某次交互的 reasoning tokens 为零（记 reasoning_tokens = 0）表示提供商账面上该次请求未动用隐藏推理，最终答案的推理工作只能归因于工具参数中的可见文本。反之，reasoning_tokens 大于零记为一次"泄漏"（leak），即模型在强制条件下仍在隐藏通道中进行了推理。该归因口径来自论文附录 A.2 与 D.2：以"基准正确率 + 提供商报告的 reasoning tokens"的联合模式作为行为证据，并将未返回计数字段的响应记为未知而非零；零计数仅表明提供商未对隐藏推理计量，不构成对内部计算的密码学证明。</p>
 
-<p>上述口径对每条响应构成如下判定逻辑。若一次受迫交互全程 reasoning_tokens = 0，则提供商账面上模型未动用隐藏通道；此时若模型仍正确回答了仅凭直觉无法可靠求解的问题，推理工作只可能发生在可见的工具参数文本中——这并不能证明该文本逐字等于内部思维链，但排除了"模型在隐藏通道完成推理、工具文本仅为事后转述"这一主要混淆变量，是闭源模型上可取得的最强证据形态。若某轮响应 reasoning_tokens &gt; 0，则表明模型在写入工具文本的同时或之后仍在隐藏通道中进行了推理，此时工具参数中的内容可能只是计划、提纲或转述，其实际承担推理工作的程度无法从文本本身判定。论文据此将此类交互标记为部分混淆（partially confounded），并在分析中按逐轮计量过滤；本报告沿用同一约定。</p>
+<p>上述口径对每条响应构成如下判定逻辑。若一次强制交互全程 reasoning_tokens = 0，则提供商账面上模型未动用隐藏通道；此时若模型仍正确回答了仅凭直觉无法可靠求解的问题，推理工作只可能发生在可见的工具参数文本中——这并不能证明该文本逐字等于内部思维链，但排除了"模型在隐藏通道完成推理、工具文本仅为事后转述"这一主要混淆变量，是闭源模型上可取得的最强证据形态。若某轮响应 reasoning_tokens &gt; 0，则表明模型在写入工具文本的同时或之后仍在隐藏通道中进行了推理，此时工具参数中的内容可能只是计划、提纲或转述，其实际承担推理工作的程度无法从文本本身判定。论文据此将此类交互标记为部分混淆（partially confounded），并在分析中按逐轮计量过滤；本报告沿用同一约定。</p>
 
 <h2 id="s3"><span class="sec-no">3.</span>评测集与真值验证</h2>
 
@@ -197,7 +197,7 @@
 
 <h2 id="s4"><span class="sec-no">4.</span>主要结果</h2>
 
-<p>共执行 90 次调用：首轮批次 40 次（十题 × 两模型 × 受迫/对照），第二轮受迫复测 20 次，Astra 强度阶梯与回执变体 30 次。除两次服务端读超时后重试成功外，无协议级错误；全部受迫请求的首轮响应均为 <code>function_call</code> 且参数可解析出非空 <code>reasoning</code> 字段。</p>
+<p>共执行 90 次调用：首轮批次 40 次（十题 × 两模型 × 强制/对照），第二轮强制复测 20 次，Astra 强度阶梯与回执变体 30 次。除两次服务端读超时后重试成功外，无协议级错误；全部强制请求的首轮响应均为 <code>function_call</code> 且参数可解析出非空 <code>reasoning</code> 字段。</p>
 
 <div class="tbl">
   <p class="tbl-cap"><b>表 2</b> · 正确率与 reasoning tokens 泄漏汇总</p>
@@ -205,19 +205,19 @@
     <thead><tr><th class="l">模型</th><th class="l">配置</th><th>样本数</th><th>正确</th><th>reasoning_tokens&gt;0 的样本</th></tr></thead>
     <tbody>
       <tr><td class="l">Sol</td><td class="l">对照（effort none，无工具）</td><td class="num">10</td><td class="num">9</td><td class="num">0</td></tr>
-      <tr><td class="l">Sol</td><td class="l">受迫（none + maximal，两轮）</td><td class="num">20</td><td class="num">19</td><td class="num">0</td></tr>
+      <tr><td class="l">Sol</td><td class="l">强制（none + maximal，两轮）</td><td class="num">20</td><td class="num">19</td><td class="num">0</td></tr>
       <tr><td class="l">Astra</td><td class="l">对照（effort low，无工具）</td><td class="num">10</td><td class="num">8</td><td class="num">10（14–718 个）</td></tr>
-      <tr><td class="l">Astra</td><td class="l">受迫（low + think-here，两轮）</td><td class="num">20</td><td class="num">20</td><td class="num">1（734 个）</td></tr>
-      <tr><td class="l">Astra</td><td class="l">受迫变体（low + continue 回执）</td><td class="num">10</td><td class="num">10</td><td class="num">0</td></tr>
-      <tr><td class="l">Astra</td><td class="l">受迫（high）</td><td class="num">10</td><td class="num">10</td><td class="num">0</td></tr>
-      <tr><td class="l">Astra</td><td class="l">受迫（xhigh）</td><td class="num">10</td><td class="num">10</td><td class="num">3（61/79/387 个）</td></tr>
+      <tr><td class="l">Astra</td><td class="l">强制（low + think-here，两轮）</td><td class="num">20</td><td class="num">20</td><td class="num">1（734 个）</td></tr>
+      <tr><td class="l">Astra</td><td class="l">强制变体（low + continue 回执）</td><td class="num">10</td><td class="num">10</td><td class="num">0</td></tr>
+      <tr><td class="l">Astra</td><td class="l">强制（high）</td><td class="num">10</td><td class="num">10</td><td class="num">0</td></tr>
+      <tr><td class="l">Astra</td><td class="l">强制（xhigh）</td><td class="num">10</td><td class="num">10</td><td class="num">3（61/79/387 个）</td></tr>
     </tbody>
   </table>
 </div>
 
-<p>逐题层面，受迫配置修正了全部对照组失分：Sol 对照组在 triple-mod 上因容斥计数错误给出 11755，受迫后为 65474；Astra 对照组在 catalan-paths 上将 12870/9 误算为 143、在 imo-1981-p3 上将 974169+2550409 误算为 3514978，两处均为末步算术错误，受迫后分别为 1430 与 3524578。唯一受迫失败样本为 Sol 第二轮的 perm-f3-7（轨迹结论 106、最终答案 141，二者互不相同且均不正确）。</p>
+<p>逐题层面，强制配置修正了全部对照组失分：Sol 对照组在 triple-mod 上因容斥计数错误给出 11755，强制后为 65474；Astra 对照组在 catalan-paths 上将 12870/9 误算为 143、在 imo-1981-p3 上将 974169+2550409 误算为 3514978，两处均为末步算术错误，强制后分别为 1430 与 3524578。唯一强制失败样本为 Sol 第二轮的 perm-f3-7（轨迹结论 106、最终答案 141，二者互不相同且均不正确）。</p>
 
-<p>轨迹长度呈稳定的模型差异：Sol 受迫轨迹均值 1625 字符（最大 7523，imo-1981-p3 的完整 Vieta-jumping 推导），Astra 均值 574 字符、中位数 317。这与论文对 Astra"高压缩、低外化"的刻画方向一致。</p>
+<p>轨迹长度呈稳定的模型差异：Sol 强制轨迹均值 1625 字符（最大 7523，imo-1981-p3 的完整 Vieta-jumping 推导），Astra 均值 574 字符、中位数 317。这与论文对 Astra"高压缩、低外化"的刻画方向一致。</p>
 
 <h2 id="s5"><span class="sec-no">5.</span>推理强度阶梯实验</h2>
 
@@ -235,13 +235,13 @@
   </table>
 </div>
 
-<p>三点观察。第一，轨迹长度随 effort 增长但不严格单调：xhigh 均值约为 low 的 1.5–2.5 倍，而 high 与 low 差异不显著；在小规模题目上轨迹量的天花板由题目本身决定。第二，泄漏集中发生于最终回答轮而非轨迹生成轮——xhigh 的三次泄漏（61、79、387 个 reasoning tokens）全部出现在第二轮，首轮受迫调用处 reasoning_tokens 恒为零；这与论文关于"推理在答案整理阶段回流原生通道"的记述一致，意味着若要筛选"全程未动用隐藏推理"的样本（论文记为 whole-interaction-zero），需对每一轮请求的 reasoning_tokens 分别检查而非只看首轮。第三，<code>"low + continue 回执"</code>变体（在工具输出中要求未完成时继续调用工具）未诱发任何第二次调用，行为与普通回执无差异。</p>
+<p>三点观察。第一，轨迹长度随 effort 增长但不严格单调：xhigh 均值约为 low 的 1.5–2.5 倍，而 high 与 low 差异不显著；在小规模题目上轨迹量的天花板由题目本身决定。第二，泄漏集中发生于最终回答轮而非轨迹生成轮——xhigh 的三次泄漏（61、79、387 个 reasoning tokens）全部出现在第二轮，首轮强制调用处 reasoning_tokens 恒为零；这与论文关于"推理在答案整理阶段回流原生通道"的记述一致，意味着若要筛选"全程未动用隐藏推理"的样本（论文记为 whole-interaction-zero），需对每一轮请求的 reasoning_tokens 分别检查而非只看首轮。第三，<code>"low + continue 回执"</code>变体（在工具输出中要求未完成时继续调用工具）未诱发任何第二次调用，行为与普通回执无差异。</p>
 
 <h2 id="s6"><span class="sec-no">6.</span>行为层面的三项结构观察</h2>
 
 <h3><span class="sec-no">6.1</span>工具调用恒为单次</h3>
 
-<p>全部 50 次 Astra 受迫交互与 20 次 Sol 受迫交互均恰好包含一次函数调用：首轮受迫写入全部推理，第二轮直接返回最终答案。论文伪代码中 <code>while response contains tool calls</code> 的循环结构在本实验中从未实际迭代。受迫外化在实践中是单轮事件而非多轮演算，协议允许多轮并不意味模型会采用该形态。</p>
+<p>全部 50 次 Astra 强制交互与 20 次 Sol 强制交互均恰好包含一次函数调用：首轮强制写入全部推理，第二轮直接返回最终答案。论文伪代码中 <code>while response contains tool calls</code> 的循环结构在本实验中从未实际迭代。强制外化在实践中是单轮事件而非多轮演算，协议允许多轮并不意味模型会采用该形态。</p>
 
 <h3><span class="sec-no">6.2</span>Astra 在难题上的提纲式占位行为</h3>
 
@@ -249,7 +249,7 @@
 
 <h3><span class="sec-no">6.3</span>轨迹结论与最终答案的脱钩</h3>
 
-<p>三次观察到受迫轨迹的最终结论与可见答案不一致：</p>
+<p>三次观察到强制轨迹的最终结论与可见答案不一致：</p>
 
 <ul>
   <li>Astra · perm-f3-7（第一轮）：轨迹以 <code>7!/(4!·3)=210</code> 的算术错误收尾、结论 491，最终答案经另一计数路径给出 351（正确）；第二轮复测中同一题目轨迹给出 351 并一致。</li>
@@ -267,9 +267,9 @@
     <thead><tr><th class="l">论文声明</th><th class="l">本实验观察</th><th>一致性</th></tr></thead>
     <tbody>
       <tr><td class="l">Sol 于 effort=none 下经 maximal 措辞可提取非空推理</td><td class="l">20/20 样本产出实质轨迹，reasoning tokens 恒为零</td><td>一致</td></tr>
-      <tr><td class="l">Astra low + think-here 的 zero-native 比率约 94%</td><td class="l">30 次 low 档受迫中 28 次全程为零（93.3%），泄漏均发生于回答轮</td><td>一致</td></tr>
+      <tr><td class="l">Astra low + think-here 的 zero-native 比率约 94%</td><td class="l">30 次 low 档强制中 28 次全程为零（93.3%），泄漏均发生于回答轮</td><td>一致</td></tr>
       <tr><td class="l">effort 升高使轨迹变长但泄漏增多</td><td class="l">xhigh 轨迹均值约为 low 的 1.5–2.5 倍，且 3/10 在回答轮泄漏</td><td>一致</td></tr>
-      <tr><td class="l">受迫准确率接近原生、显著高于无推理基线</td><td class="l">受迫修正全部对照失分（Astra 8→10，Sol 9→10，n=10）</td><td>方向一致，幅度受限</td></tr>
+      <tr><td class="l">强制准确率接近原生、显著高于无推理基线</td><td class="l">强制修正全部对照失分（Astra 8→10，Sol 9→10，n=10）</td><td>方向一致，幅度受限</td></tr>
       <tr><td class="l">提取文本为行为代理，非可证的内部推理</td><td class="l">三次轨迹-答案脱钩直接支持该限定</td><td>一致且有实证强化</td></tr>
     </tbody>
   </table>
@@ -294,7 +294,7 @@
 <ul>
   <li><code>scripts/replay_cot.py</code>——单题交互式复现脚本（Responses API），命令行指定模型、effort、工具描述与题目；</li>
   <li><code>forced_reasoning/</code>——可复用包：API 客户端、论文原文工具描述、协议循环、带验证器的题库；</li>
-  <li><code>scripts/run_batch.py</code>——批量驱动，含十题验证器与受迫/对照矩阵；</li>
+  <li><code>scripts/run_batch.py</code>——批量驱动，含十题验证器与强制/对照矩阵；</li>
   <li><code>scripts/run_ladder.py</code>——Astra effort 阶梯与 continue 回执变体；</li>
   <li><code>results/*.json</code>——90 份完整记录，每份含逐轮输出类型、令牌计量、轨迹全文与最终答案；</li>
   <li>密钥经环境变量 <code>OPENAI_API_KEY</code> 注入，端点地址经 <code>OPENAI_BASE_URL</code> 配置，均未写入任何文件。</li>
@@ -303,7 +303,7 @@
 <div class="endnotes">
   <ol>
     <li>论文：Luo, Ren, Yu, Li, Li, Bjerva, <i>Capable yet Parsimonious: Extracting and Characterizing Hidden Chain-of-Thought in Frontier Models</i>, arXiv:2609.26637v1, 2026-09-22.</li>
-    <li>本报告中的"轨迹"（trace）一律指受迫工具参数中观测到的文本，与模型内部推理的同一性不在主张范围内。</li>
+    <li>本报告中的"轨迹"（trace）一律指强制工具参数中观测到的文本，与模型内部推理的同一性不在主张范围内。</li>
     <li>对照组在此指同 effort 下不注册工具的请求；Sol 对照即 effort=none 且无任何推理通道的纯生成。</li>
   </ol>
 </div>

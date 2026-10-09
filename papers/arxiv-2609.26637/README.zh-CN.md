@@ -20,7 +20,7 @@ forced_reasoning/
   problems.py   10 道竞赛题 + 程序化验证器 + 判分器
 scripts/
   replay_cot.py   单会话驱动
-  run_batch.py    题目 × {sol, astra} × {受迫, 对照} 矩阵
+  run_batch.py    题目 × {sol, astra} × {强制, 对照} 矩阵
   run_ladder.py   astra effort 阶梯（low/high/xhigh）+ continue 回执变体
 results/          全部 90 次运行的原始 JSON
 ```
@@ -34,14 +34,14 @@ results/          全部 90 次运行的原始 JSON
 
 ## 结果摘要
 
-10 道已验证题目上的正确数（受迫组含两轮）：
+10 道已验证题目上的正确数（强制组含两轮）：
 
-| | 对照 | 受迫 |
+| | 对照 | 强制 |
 |---|---|---|
 | gpt-5.6-sol (effort none) | 9/10 | 19/20 |
 | gpt-6-astra (effort low) | 8/10 | 20/20 |
 
-全部受迫会话均恰好一次工具调用；Sol 的所有受迫运行在每一轮都报告
+全部强制会话均恰好一次工具调用；Sol 的所有强制运行在每一轮都报告
 `reasoning_tokens = 0`；三次观察到最终答案与轨迹自身结论不一致。
 
 详见[完整报告](../../docs/arxiv-2609.26637/report.zh-CN.html)，含 effort

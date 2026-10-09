@@ -19,11 +19,11 @@
 export OPENAI_API_KEY=sk-...                     # 必填
 export OPENAI_BASE_URL=https://...               # 可选，任何 OpenAI 兼容端点
 
-# 单次受迫推理会话
+# 单次强制推理会话
 python papers/arxiv-2609.26637/scripts/replay_cot.py \
     gpt-5.6-sol none maximal "Let S = {1,...,1000}. Count subsets whose sum is divisible by 5."
 
-# 完整基准矩阵（10 道可验证题目 × 2 模型 × 受迫/对照）
+# 完整基准矩阵（10 道可验证题目 × 2 模型 × 强制/对照）
 python papers/arxiv-2609.26637/scripts/run_batch.py
 
 # Astra effort 阶梯 + 回执变体
@@ -34,11 +34,11 @@ python papers/arxiv-2609.26637/scripts/run_ladder.py
 
 在 10 道程序化验证的竞赛级题目上、共 90 次调用测得：
 
-- 两个模型都会把实质推理写进受迫工具的参数；**gpt-5.6-sol 在全部
-  20 次受迫运行中 reasoning tokens 恒为零**。
-- 受迫协议在两个模型上的正确率均不低于无工具对照
-  （Sol 9→10、Astra 8→10；Astra 受迫总计 50/50）。
-- **协议循环实际上从不循环**——70 次受迫会话全部恰好一次工具调用，
+- 两个模型都会把实质推理写进强制工具的参数；**gpt-5.6-sol 在全部
+  20 次强制运行中 reasoning tokens 恒为零**。
+- 强制协议在两个模型上的正确率均不低于无工具对照
+  （Sol 9→10、Astra 8→10；Astra 强制总计 50/50）。
+- **协议循环实际上从不循环**——70 次强制会话全部恰好一次工具调用，
   模型一次写完所有推理。
 - **轨迹-答案脱钩真实存在**：三次出现最终答案与轨迹自身结论不一致，
   例如轨迹以 491 收尾而可见答案给出正确的 351。
