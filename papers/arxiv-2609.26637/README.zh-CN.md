@@ -220,6 +220,17 @@ they would be similarly useful for distillation purposes." 据此，外化推理
 在分布上与原生推理相近，但属于重新生成的轨迹，并非原生思维链的逐字还原。
 该对比仅涉及单一模型，且未使用命名 `tool_choice`。
 
+### Claude Opus 5.5 与 Fable 5.1 的 API 限制
+
+根据 Anthropic [Opus 5.5 发布说明](https://platform.claude.com/docs/en/models/opus-5-5/whats-new-opus-5-5)，Claude Opus 5.5 与 Fable 5.1 不再接受 Forced-Reasoning 及 omp `think` 工具所依赖的两项 API 控制：
+
+- 不支持强制工具选择。将 `tool_choice` 设为 `{"type": "any"}` 或 `{"type": "tool", "name": ...}` 时返回 HTTP 400（`tool_choice: type "tool" and "any" are not supported for this model.`），token 计数接口同样受此限制。
+- 无法关闭原生推理。`thinking: {"type": "disabled"}` 与手动设置 `budget_tokens` 均返回 HTTP 400，仅接受 adaptive 思考配合 effort 档位。
+
+此外，相邻工具调用之间输出的文本现被置于 thinking 块中，该类块默认 `display: "omitted"`，返回文本为空。
+
+因此，本协议无法按原设定应用于上述两个模型。可行的变体仅剩 `tool_choice: "auto"` 并通过提示引导模型调用推理工具，且原生推理必然处于开启状态；该变体尚未在本复现中评估。OpenAI 侧亦有类似限制：GPT-6.1 Sol 不再接受 `reasoning.effort` 取值 `none` 或 `minimal`。
+
 ### TODO：后续消融实验
 
 为检验计量为 0 源于工具描述中的指令还是工具强制本身，可在原生推理开启的

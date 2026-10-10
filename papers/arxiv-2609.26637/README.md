@@ -239,6 +239,17 @@ to native reasoning, but it is a re-generated trace rather than a verbatim
 recovery of the native chain of thought. The comparison covers a single
 model and does not use a named `tool_choice`.
 
+### API restrictions on Claude Opus 5.5 and Fable 5.1
+
+According to Anthropic's [Opus 5.5 release notes](https://platform.claude.com/docs/en/models/opus-5-5/whats-new-opus-5-5), Claude Opus 5.5 and Fable 5.1 reject the two API controls on which Forced-Reasoning and the omp `think` tool depend:
+
+- Forced tool selection is not supported. Setting `tool_choice` to `{"type": "any"}` or `{"type": "tool", "name": ...}` returns HTTP 400 (`tool_choice: type "tool" and "any" are not supported for this model.`); the token-counting endpoint applies the same restriction.
+- Native reasoning cannot be disabled. `thinking: {"type": "disabled"}` and a manual `budget_tokens` both return HTTP 400; only adaptive thinking with an effort level is accepted.
+
+In addition, text emitted between consecutive tool calls is now placed in thinking blocks, which default to `display: "omitted"` and are returned with empty text.
+
+Consequently, the protocol cannot be applied to these two models as specified. The only remaining variant is `tool_choice: "auto"` with prompt-level instructions to call the reasoning tool, with native reasoning necessarily enabled. This variant has not been evaluated in this reproduction. Comparable restrictions apply on the OpenAI side, where GPT-6.1 Sol no longer accepts `reasoning.effort` values of `none` or `minimal`.
+
 ### TODO: follow-up ablation
 
 To test whether the zero count results from the instruction rather than from
