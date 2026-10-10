@@ -164,3 +164,64 @@ results/          全部 90 次运行的原始 JSON
 
 详见[完整报告](../../docs/arxiv-2609.26637/report.zh-CN.html)，含 effort
 阶梯、轨迹统计与一致性分析。
+
+## 相关独立证据：Stolen Thoughts 更新报告（2026 年 9 月）
+
+来源：[Stolen Thoughts 更新报告](https://stolen-thoughts.com/stolen_thoughts_update.pdf)（Schaeffer 等，2026 年 9 月）。
+
+### 工具外化（scratchpad）攻击
+
+该报告 §2.2 描述了一种密切相关的攻击：要求模型将推理写入私有
+scratchpad 工具。该方法由 Can Bölük 公开展示，并实现为 oh-my-pi（omp）
+的 `externalThinking` 选项与 `think` 工具，首次发布于 v17.2.14（commit
+`10fd42289c`，2026-08-12），早于 arXiv 2609.26637。两种协议的差异如下：
+
+| | omp `think` | Forced-Reasoning（本复现） |
+|---|---|---|
+| 原生推理 | `reasoning.effort` 设为 `none` | 协议本身不关闭（本配置中 Sol 为 `none`，Astra 为 `low`） |
+| 工具强制 | 每个用户轮首步命名 `tool_choice`，随后 `auto` | 仅一次命名 `tool_choice`，随后 `auto` |
+| 提示 | 常驻系统提示，要求在作答及不可逆操作前调用工具 | 仅工具描述 |
+
+### 隐藏推理 token
+
+隐藏推理 token 指 `usage.output_tokens_details` 中报告的
+`reasoning_tokens`：提供商对其计费，但不以明文返回其内容。报告 §2.2 指出：
+
+> "even with reasoning turned on, this method works. If reasoning is turned
+> on, models will sometimes use very few (if any) hidden reasoning tokens but
+> still put its reasoning into the tool."
+
+该观察与本复现中 Sol 在所有强制轮次均报告 `reasoning_tokens = 0` 的结果
+一致，可作为佐证，但不构成解释：报告未给出因果机制，且其条件（omp 提示、
+现象"有时"出现）与本复现（恒为 0）不同。此外，本复现中 Sol 使用
+`reasoning.effort = "none"`，在该设置下计量为 0 与工具外化无关即可预期；
+上述引文针对的是原生推理开启的情形。
+
+### 保真度对比
+
+作者仅在 GPT-6 Astra 上将 scratchpad 轨迹与经回放解码得到的原生推理进行
+对比（HLE 152 题，双方推理强度均为 `low`，使用 omp scratchpad 提示）。
+
+| 指标 | 数值 |
+|---|---|
+| 长度中位数（scratchpad / 原生） | 128 / 128 tokens |
+| 逐题长度比 | 1.07 |
+| 长度 Spearman rho | 0.89 |
+| 长度 KS 统计量 | 0.13 |
+| 不依赖长度的字符 3-5-gram 分类器 AUC，原生 low 对 scratchpad（n = 152） | 0.64 |
+| 正对照 AUC，原生 low 对 medium（n = 150） | 0.80 |
+| 零对照 AUC，两次独立 scratchpad 运行 | 0.50 |
+
+词汇差异反映的是提示措辞（原生轨迹中多见预算与连接类词汇，如
+"time"、"remaining"、"hence"；scratchpad 轨迹中多见作答规程类词汇，如
+"explain"、"check"），而非题目内容。逐字重合极少，所示示例中最长共同
+片段约为 6 个词。作者结论为："the traces are very similar and we suspect
+they would be similarly useful for distillation purposes." 据此，外化推理
+在分布上与原生推理相近，但属于重新生成的轨迹，并非原生思维链的逐字还原。
+该对比仅涉及单一模型，且未使用命名 `tool_choice`。
+
+### TODO：后续消融实验
+
+为检验计量为 0 源于工具描述中的指令还是工具强制本身，可在原生推理开启的
+Astra 上保留命名 `tool_choice`，同时从工具描述中删除"将推理写入工具"的
+指令，观察 `reasoning_tokens` 是否恢复为非零值。

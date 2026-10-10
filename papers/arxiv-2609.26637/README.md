@@ -173,3 +173,76 @@ final answer diverging from the trace's own conclusion.
 
 See the [full report](../../docs/arxiv-2609.26637/report.en.html) for the
 effort ladder, trace statistics, and consistency analysis.
+
+## Related independent evidence: Stolen Thoughts update (September 2026)
+
+Source: [Stolen Thoughts update](https://stolen-thoughts.com/stolen_thoughts_update.pdf) (Schaeffer et al., September 2026).
+
+### Tool-externalization (scratchpad) attack
+
+Section 2.2 of the update describes a closely related attack in which the
+model is instructed to write its reasoning into a private scratchpad tool.
+The technique was publicly demonstrated by Can Bölük and implemented as the
+`externalThinking` option and `think` tool of oh-my-pi (omp), first released
+in v17.2.14 (commit `10fd42289c`, 2026-08-12), which predates arXiv
+2609.26637. The two protocols differ as follows:
+
+| | omp `think` | Forced-Reasoning (this reproduction) |
+|---|---|---|
+| Native reasoning | `reasoning.effort` set to `none` | not disabled by the protocol (`none` for Sol and `low` for Astra in this configuration) |
+| Tool forcing | named `tool_choice` on the first step of each user turn, then `auto` | named `tool_choice` once, then `auto` |
+| Prompting | persistent system prompt requiring tool calls before answering and before consequential actions | tool description only |
+
+### Hidden reasoning tokens
+
+Hidden reasoning tokens are the `reasoning_tokens` reported in
+`usage.output_tokens_details`: they are billed by the provider but their
+content is not returned in plaintext. The update states (§2.2):
+
+> "even with reasoning turned on, this method works. If reasoning is turned
+> on, models will sometimes use very few (if any) hidden reasoning tokens but
+> still put its reasoning into the tool."
+
+This observation is consistent with, and corroborates, the finding in this
+reproduction that Sol reports `reasoning_tokens = 0` in every forced round.
+It does not constitute an explanation: the update proposes no causal
+mechanism, and its conditions (omp prompt, effect occurring "sometimes")
+differ from those here (constant 0). Moreover, the Sol runs in this
+reproduction use `reasoning.effort = "none"`, under which a zero count is
+expected independently of tool externalization; the quoted observation
+concerns the case in which native reasoning is enabled.
+
+### Fidelity comparison
+
+The authors compare scratchpad traces with native reasoning recovered by
+replay decoding on GPT-6 Astra only (HLE, 152 problems, reasoning effort
+`low` on both sides, omp scratchpad prompt).
+
+| Metric | Value |
+|---|---|
+| Median length (scratchpad / native) | 128 / 128 tokens |
+| Per-item length ratio | 1.07 |
+| Spearman rho (length) | 0.89 |
+| KS statistic (length) | 0.13 |
+| Length-blind char 3-5-gram classifier AUC, native low vs. scratchpad (n = 152) | 0.64 |
+| Positive control AUC, native low vs. medium (n = 150) | 0.80 |
+| Null control AUC, two scratchpad runs | 0.50 |
+
+Lexical differences reflect prompt wording (budget and connective terms such
+as "time", "remaining", "hence" in native traces; answer-procedure terms such
+as "explain", "check" in scratchpad traces) rather than problem content.
+Verbatim overlap is minimal; in the example shown, the longest shared passage
+is approximately six words. The authors conclude: "the traces are very
+similar and we suspect they would be similarly useful for distillation
+purposes." The externalized reasoning is therefore distributionally similar
+to native reasoning, but it is a re-generated trace rather than a verbatim
+recovery of the native chain of thought. The comparison covers a single
+model and does not use a named `tool_choice`.
+
+### TODO: follow-up ablation
+
+To test whether the zero count results from the instruction rather than from
+tool forcing, run Astra (native reasoning enabled) with the named
+`tool_choice` retained but with the instruction to write reasoning into the
+tool removed from the tool description, and check whether
+`reasoning_tokens` recovers to non-zero values.
